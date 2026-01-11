@@ -56,7 +56,7 @@ export default function LoginForm() {
         }
       } catch (error) {
         toast.error("Terjadi Kesalahan", {
-          description: "Silakan coba lagi nanti.",
+          description: `Error: ${error}, Silakan coba lagi nanti.`,
         });
       }
     });

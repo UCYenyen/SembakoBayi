@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
-// Pastikan path import ini sesuai dengan struktur project Anda
 import { registerSchema, type RegisterValues } from "@/types/authValidation.md";
 import { signup } from "@/lib/action/auth";
 
@@ -60,7 +59,7 @@ export function RegisterForm() {
         }
       } catch (error) {
         toast.error("Terjadi Kesalahan", {
-          description: "Silakan coba lagi nanti.",
+          description: `Error: ${error}, Silakan coba lagi nanti.`,
         });
       }
     });
