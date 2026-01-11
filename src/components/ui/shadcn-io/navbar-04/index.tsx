@@ -20,6 +20,8 @@ import {
   PopoverTrigger,
 } from '@/components/ui/shadcn-ui/popover';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/utils/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
   return (
@@ -96,7 +98,6 @@ export interface Navbar04Props extends React.HTMLAttributes<HTMLElement> {
 }
 
 const defaultNavigationLinks: Navbar04NavItem[] = [
-  { href: '#', label: 'Produk' },
   { href: '#', label: 'Belanja' },
   { href: '#', label: 'Voucher' },
 ];
@@ -125,6 +126,8 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const searchId = useId();
+    const [user, setUser] = useState<User | null>(null);
+    const supabase = createClient(); // Inisialisasi client
 
     useEffect(() => {
       const checkWidth = () => {
@@ -145,6 +148,34 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
         resizeObserver.disconnect();
       };
     }, []);
+
+    useEffect(() => {
+      const getUser = async () => {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (user) {
+          setUser(user);
+        }
+      };
+      getUser();
+
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        (_event, session) => {
+          setUser(session?.user ?? null);
+        }
+      );
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }, [supabase]);
+
+    // --- 4. HANDLE LOGOUT ---
+    const handleSignOut = async () => {
+      await supabase.auth.signOut();
+      setUser(null);
+      // Opsional: Refresh halaman atau redirect ke home
+      window.location.reload();
+    };
 
     const combinedRef = React.useCallback((node: HTMLElement | null) => {
       containerRef.current = node;
@@ -205,45 +236,50 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                     ))}
 
                     <div className="my-2 h-px bg-border" />
+                    {!user ? (
+                      <>
+                        <Button
+                          variant="ghost"
+                          asChild
+                          className="w-full justify-start text-left h-10 px-3"
+                        >
+                          <Link
+                            href={signInHref || '#'}
+                            onClick={() => {
+                              setIsPopoverOpen(false);
+                              if (onSignInClick) onSignInClick();
+                            }}
+                          >
+                            {signInText}
+                          </Link>
+                        </Button>
+                      </>
+                    ) : (
+                      <>
 
-                    <Button
-                      variant="ghost"
-                      asChild
-                      className="w-full justify-start text-left h-10 px-3"
-                    >
-                      <Link
-                        href={signInHref || '#'}
-                        onClick={() => {
-                          setIsPopoverOpen(false);
-                          if (onSignInClick) onSignInClick();
-                        }}
-                      >
-                        {signInText}
-                      </Link>
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      asChild
-                      className="w-full justify-start text-left h-10 px-3"
-                    >
-                      <Link
-                        href={cartHref || '#'}
-                        onClick={() => {
-                          setIsPopoverOpen(false);
-                          if (onCartClick) onCartClick();
-                        }}
-                      >
-                        <div className="flex w-full items-center justify-between">
-                          <span>{cartText}</span>
-                          {cartCount !== undefined && cartCount > 0 && (
-                            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1 text-xs font-medium text-primary">
-                              {cartCount}
-                            </span>
-                          )}
-                        </div>
-                      </Link>
-                    </Button>
+                        <Button
+                          variant="ghost"
+                          asChild
+                          className="w-full justify-start text-left h-10 px-3"
+                        >
+                          <Link
+                            href={cartHref || '#'}
+                            onClick={() => {
+                              setIsPopoverOpen(false);
+                              if (onCartClick) onCartClick();
+                            }}
+                          >
+                            <div className="flex w-full items-center justify-between">
+                              <span>{cartText}</span>
+                              {cartCount !== undefined && cartCount > 0 && (
+                                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1 text-xs font-medium text-primary">
+                                  {cartCount}
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+                        </Button>
+                      </>)}
                   </div>
                 </PopoverContent>
               </Popover>
@@ -296,6 +332,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
 
           {!isMobile && (
             <div className="flex items-center gap-3">
+              {!user ? (
               <Button
                 variant="ghost"
                 size="sm"
@@ -311,30 +348,34 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                   {signInText}
                 </Link>
               </Button>
-              <Button
-                variant={"ghost"}
-                size="sm"
-                asChild
-                className="text-sm font-medium px-4 h-9 rounded-md cursor-pointer"
-              >
-                <Link
-                  href={cartHref || '#'}
-                  onClick={(e) => {
-                    if (onCartClick) onCartClick();
-                  }}
-                >
-                  <span className="flex text-primary items-baseline gap-2">
-                    <FaShoppingCart />
-                    <span className="text-primary text-xs">
-                      {cartCount}
-                    </span>
-                  </span>
-                </Link>
-              </Button>
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+              ) : (
+                <>
+                  <Button
+                    variant={"ghost"}
+                    size="sm"
+                    asChild
+                    className="text-sm font-medium px-4 h-9 rounded-md cursor-pointer"
+                  >
+                    <Link
+                      href={cartHref || '#'}
+                      onClick={(e) => {
+                        if (onCartClick) onCartClick();
+                      }}
+                    >
+                      <span className="flex text-primary items-baseline gap-2">
+                        <FaShoppingCart />
+                        <span className="text-primary text-xs">
+                          {cartCount}
+                        </span>
+                      </span>
+                    </Link>
+                  </Button>
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </>
+              )}
             </div>
           )}
         </div>
