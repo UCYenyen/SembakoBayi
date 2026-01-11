@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/themeProvider"
 import { Navbar04 } from "@/components/ui/shadcn-io/navbar-04";
+import { Toaster } from "sonner";
+import { createClient } from "@/utils/supabase/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,24 +21,29 @@ export const metadata: Metadata = {
   description: "Sembako bayi adalah website resmi dari sembako bayi ponorogo. Website ini menyediakan berbagai informasi mengenai produk sembako bayi yang kami tawarkan.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
-        {children}
-        <Navbar04></Navbar04>
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar04 user={user} />
+          {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

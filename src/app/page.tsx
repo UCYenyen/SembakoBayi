@@ -1,5 +1,5 @@
 import React from "react"
-import { ModeToggle } from "@/components/common/ModeToggle"
+import { ModeToggle } from "@/components/common/modeToggle"
 export default function page() {
   return (
     <>
