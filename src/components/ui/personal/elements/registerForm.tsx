@@ -1,17 +1,17 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
+import * as React from "react"
+import { useTransition } from "react"
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
+import Link from "next/link"
 
-import { registerSchema, type RegisterValues } from "@/types/authValidation.md";
-import { signup } from "@/lib/action/auth";
+import { registerSchema, type RegisterValues } from "@/types/authValidation.md"
+import { signIn, signUp } from "@/lib/action/auth"
 
-import { Button } from "@/components/ui/shadcn-ui/button";
+import { Button } from "@/components/ui/shadcn-ui/button"
 import {
   Card,
   CardContent,
@@ -19,54 +19,56 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/shadcn-ui/card";
+} from "@/components/ui/shadcn-ui/card"
 import {
   Field,
   FieldError,
   FieldLabel,
-} from "@/components/ui/shadcn-ui/field";
-import { Input } from "@/components/ui/shadcn-ui/input";
-import { InputGroup } from "@/components/ui/shadcn-ui/input-group";
+} from "@/components/ui/shadcn-ui/field"
+import { Input } from "@/components/ui/shadcn-ui/input"
+import { InputGroup } from "@/components/ui/shadcn-ui/input-group"
+import { ShadcnPhoneInput } from "@/components/ui/shadcn-ui/phoneInput"
 
 export function RegisterForm() {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
+      phone: "",
       password: "",
       confirmPassword: "",
     },
-  });
+  })
 
   function onSubmit(data: RegisterValues) {
     startTransition(async () => {
       try {
-        const result = await signup(data);
+        const result = await signUp(data)
 
         if (result?.error) {
           toast.error("Registrasi Gagal", {
             description: result.error,
-          });
-          form.setError("root", { message: result.error });
+          })
+          form.setError("root", { message: result.error })
         } else {
           toast.success("Registrasi Berhasil", {
             description: "Silakan cek email atau login.",
-          });
-          form.reset();
+          })
+          form.reset()
         }
       } catch (error) {
         toast.error("Terjadi Kesalahan", {
           description: `Error: ${error}, Silakan coba lagi nanti.`,
-        });
+        })
       }
-    });
+    })
   }
 
   return (
-    <Card className="w-full sm:max-w-[450px] shadow-lg">
+    <Card className="w-full sm:max-w-112.5 shadow-lg">
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-bold">Buat Akun Baru</CardTitle>
         <CardDescription>
@@ -79,10 +81,9 @@ export function RegisterForm() {
           className="grid gap-4"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          {/* Global Error Message */}
           {form.formState.errors.root && (
             <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-2 text-sm text-destructive font-medium border border-destructive/20">
-              ⚠️ {form.formState.errors.root.message}
+              {form.formState.errors.root.message}
             </div>
           )}
 
@@ -109,6 +110,24 @@ export function RegisterForm() {
               />
             </InputGroup>
             <FieldError>{form.formState.errors.email?.message}</FieldError>
+          </Field>
+
+          <Field>
+            <FieldLabel>Nomor Telepon</FieldLabel>
+            <Controller
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <ShadcnPhoneInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="812 3456 7890"
+                  defaultCountry="ID"
+                  disabled={isPending}
+                />
+              )}
+            />
+            <FieldError>{form.formState.errors.phone?.message}</FieldError>
           </Field>
 
           <Field>
@@ -139,7 +158,6 @@ export function RegisterForm() {
             </FieldError>
           </Field>
 
-          {/* Full Width Submit Button */}
           <Button
             type="submit"
             className="w-full mt-2"
@@ -152,13 +170,12 @@ export function RegisterForm() {
       </CardContent>
       
       <CardFooter className="flex flex-col space-y-4">
-        {/* Visual Divider */}
         <div className="relative w-full">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
+            <span className="bg-card px-2 text-muted-foreground">
               Atau
             </span>
           </div>
@@ -172,5 +189,5 @@ export function RegisterForm() {
         </div>
       </CardFooter>
     </Card>
-  );
+  )
 }

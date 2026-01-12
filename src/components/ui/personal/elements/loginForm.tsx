@@ -1,15 +1,14 @@
 "use client";
 
-import * as React from "react";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import Link from "next/link"; // PERBAIKAN: Import dari next/link
+import Link from "next/link";
 
-import { loginSchema, type LoginValues } from "@/types/authValidation.md"; // Pastikan path ini benar
-import { login } from "@/lib/action/auth";
+import { loginSchema, type LoginValues } from "@/types/authValidation.md"; 
+import { signIn } from "@/lib/action/auth";
 
 import { Button } from "@/components/ui/shadcn-ui/button";
 import {
@@ -42,7 +41,7 @@ export default function LoginForm() {
   function onSubmit(data: LoginValues) {
     startTransition(async () => {
       try {
-        const result = await login(data);
+        const result = await signIn(data);
 
         if (result?.error) {
           toast.error("Login Gagal", {
@@ -63,7 +62,7 @@ export default function LoginForm() {
   }
 
   return (
-    <Card className="w-full sm:max-w-[400px] shadow-lg"> {/* Lebar fix & shadow */}
+    <Card className="w-full sm:max-w-112.5 shadow-lg"> {/* Lebar fix & shadow */}
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center">Selamat Datang</CardTitle>
         <CardDescription className="text-center">

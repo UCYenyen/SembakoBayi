@@ -8,6 +8,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { Button } from '@/components/ui/shadcn-ui/button';
 import { Input } from '@/components/ui/shadcn-ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/shadcn-ui/avatar';
+import { MdDashboard } from "react-icons/md";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -31,7 +32,6 @@ import { cn } from '@/lib/utils';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 
-// UBAH: Gunakan React.ComponentProps<'svg'> agar tidak perlu casting 'as any'
 const Logo = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg width='1em' height='1em' viewBox='0 0 324 323' fill='currentColor' xmlns='http://www.w3.org/2000/svg' {...props}>
@@ -57,7 +57,6 @@ const Logo = (props: React.ComponentProps<'svg'>) => {
   );
 };
 
-// UBAH: Gunakan React.ComponentProps<'svg'>
 const HamburgerIcon = ({ className, ...props }: React.ComponentProps<'svg'>) => (
   <svg
     className={cn('pointer-events-none', className)}
@@ -373,12 +372,12 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Avatar className="cursor-pointer h-9 w-9 hover:opacity-80 transition-opacity">
-                        <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
+                        <AvatarImage src={user.user_metadata.avatar_url} alt="@user" />
                         <AvatarFallback>{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
+                      <DropdownMenuLabel className='overflow-x-auto'>{user.user_metadata.full_name}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <Link href="/profile" className="cursor-pointer w-full flex items-center">
@@ -387,7 +386,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                       </DropdownMenuItem>
                        <DropdownMenuItem asChild>
                         <Link href="/dashboard" className="cursor-pointer w-full flex items-center">
-                           Dashboard
+                          <MdDashboard className="mr-2 h-4 w-4" /> Dashboard
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />

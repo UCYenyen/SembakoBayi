@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/themeProvider"
 import { Navbar04 } from "@/components/ui/shadcn-io/navbar-04";
 import { Toaster } from "sonner";
 import { createClient } from "@/utils/supabase/server";
+import Footer from "@/components/ui/personal/layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default async function RootLayout({
           <Navbar04 user={user} />
           {children}
           <Toaster />
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 export const loginSchema = z.object({
   email: z
@@ -24,6 +25,12 @@ export const registerSchema = z
       .string()
       .min(1, { message: "Email wajib diisi." })
       .email({ message: "Format email tidak valid." }),
+    phone: z
+    .string()
+    .min(1, { message: "Nomor telepon wajib diisi" })
+    .refine((val) => isValidPhoneNumber(val), {
+      message: "Nomor telepon tidak valid",
+    }),
     password: z
       .string()
       .min(1, { message: "Password wajib diisi." })
