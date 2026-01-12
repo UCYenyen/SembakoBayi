@@ -43,7 +43,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthSessionProvider>
+          <AuthSessionProvider initialUser={user}>
             <Navbar04 user={user} />
             {children}
             <Toaster />

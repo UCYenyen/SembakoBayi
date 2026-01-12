@@ -3,12 +3,12 @@
 import * as React from 'react';
 import { useEffect, useState, useRef, useId } from 'react';
 import Link from 'next/link';
-import { SearchIcon, LogOut, User as UserIcon } from 'lucide-react';
+import { SearchIcon, LogOut } from 'lucide-react';
 import { FaShoppingCart } from "react-icons/fa";
 import { Button } from '@/components/ui/shadcn-ui/button';
 import { Input } from '@/components/ui/shadcn-ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/shadcn-ui/avatar';
-import { MdDashboard } from "react-icons/md";
+import { Skeleton } from '@/components/ui/shadcn-ui/skeleton';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -29,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/shadcn-ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { getSupabaseBrowserClient } from '@/utils/supabase/client';
+import { useAuth } from '@/components/providers/AuthSessionProvider';
 import { User } from '@supabase/supabase-js';
 
 const Logo = (props: React.ComponentProps<'svg'>) => {
@@ -128,16 +128,15 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
       onSignInClick,
       onCartClick,
       onSearchSubmit,
-      user,
       ...props
     },
     ref
   ) => {
     const [isMobile, setIsMobile] = useState(false);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const { user, isLoading, signOut } = useAuth();
     const containerRef = useRef<HTMLElement>(null);
     const searchId = useId();
-    const supabase = getSupabaseBrowserClient();
 
     useEffect(() => {
       const checkWidth = () => {
@@ -158,11 +157,6 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
         resizeObserver.disconnect();
       };
     }, []);
-
-    const handleSignOut = async () => {
-      await supabase.auth.signOut();
-      window.location.reload();
-    };
 
     const combinedRef = React.useCallback((node: HTMLElement | null) => {
       containerRef.current = node;
@@ -189,99 +183,10 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
           'fixed top-0 z-50 w-full border-b bg-card backdrop-blur px-4 md:px-6 [&_*]:no-underline',
           className
         )}
-        {...props} // UBAH: Hapus 'as any'
+        {...props}
       >
         <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-4">
           <div className="flex flex-1 items-center gap-2">
-            
-            {/* MOBILE MENU */}
-            {isMobile && (
-              <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    className="group h-9 w-9 hover:bg-accent hover:text-accent-foreground"
-                    variant="ghost"
-                    size="icon"
-                  >
-                    <HamburgerIcon />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="start" className="w-64 p-4">
-                  <div className="flex flex-col gap-2">
-                    {navigationLinks.map((link, index) => (
-                      <Button
-                        key={index}
-                        variant="ghost"
-                        asChild
-                        className="w-full justify-start text-left font-medium h-10 px-3"
-                      >
-                        <Link
-                          href={link.href || '#'}
-                          onClick={() => setIsPopoverOpen(false)}
-                        >
-                          {link.label}
-                        </Link>
-                      </Button>
-                    ))}
-
-                    <div className="my-2 h-px bg-border" />
-                    {!user ? (
-                      <>
-                        <Button
-                          variant="ghost"
-                          asChild
-                          className="w-full justify-start text-left h-10 px-3"
-                        >
-                          <Link
-                            href={signInHref || '#'}
-                            onClick={() => {
-                              setIsPopoverOpen(false);
-                              if (onSignInClick) onSignInClick();
-                            }}
-                          >
-                            {signInText}
-                          </Link>
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          variant="ghost"
-                          asChild
-                          className="w-full justify-start text-left h-10 px-3"
-                        >
-                          <Link
-                            href={cartHref || '#'}
-                            onClick={() => {
-                              setIsPopoverOpen(false);
-                              if (onCartClick) onCartClick();
-                            }}
-                          >
-                            <div className="flex w-full items-center justify-between">
-                              <span>{cartText}</span>
-                              {cartCount !== undefined && cartCount > 0 && (
-                                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1 text-xs font-medium text-primary">
-                                  {cartCount}
-                                </span>
-                              )}
-                            </div>
-                          </Link>
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          className="w-full justify-start text-left h-10 px-3 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={handleSignOut}
-                        >
-                           <LogOut className="mr-2 h-4 w-4" />
-                           Keluar
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </PopoverContent>
-              </Popover>
-            )}
-
             <div className="flex flex-1 items-center gap-6 max-md:justify-between">
               <Link
                 href={logoHref}
@@ -324,80 +229,224 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                   <SearchIcon size={16} />
                 </div>
               </form>
+
+              {isMobile && (
+                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      className="group h-9 w-9 hover:bg-accent hover:text-accent-foreground"
+                      variant="ghost"
+                      size="icon"
+                    >
+                      <HamburgerIcon />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-64 p-4">
+                    <div className="flex flex-col gap-2">
+                      {user && (
+                        <div className="flex flex-col items-end justify-center gap-3 p-2">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={user.user_metadata.avatar_url} alt="@user" />
+                            <AvatarFallback>{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col items-end overflow-hidden">
+                            <span className="font-medium">{user.user_metadata.full_name}</span>
+                            <span className="text-sm text-muted-foreground overflow-x-auto">{user.email}</span>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="my-2 h-px bg-border" />
+
+                      <Button
+                        variant="ghost"
+                        asChild
+                        className="w-full justify-end text-right font-medium h-10 px-3"
+                      >
+                        <Link href="/profile"
+                          onClick={() => setIsPopoverOpen(false)}
+                        >
+                          Profile
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        asChild
+                        className="w-full justify-end text-right font-medium h-10 px-3"
+                      >
+                        <Link href="/dashboard" onClick={() => setIsPopoverOpen(false)}>
+                          Dashboard
+                        </Link>
+                      </Button>
+
+                      {navigationLinks.map((link, index) => (
+                        <Button
+                          key={index}
+                          variant="ghost"
+                          asChild
+                          className="w-full justify-end text-right font-medium h-10 px-3"
+                        >
+                          <Link
+                            href={link.href || '#'}
+                            onClick={() => setIsPopoverOpen(false)}
+                          >
+                            {link.label}
+                          </Link>
+                        </Button>
+                      ))}
+
+                      <div className="my-2 h-px bg-border" />
+
+                      {isLoading ? (
+                        <div className="flex flex-col gap-2 p-2">
+                          <Skeleton className="h-10 w-full rounded-md" />
+                          <Skeleton className="h-10 w-full rounded-md" />
+                        </div>
+                      ) : (
+                        <>
+                          {!user ? (
+                            <>
+                              <Button
+                                variant="ghost"
+                                asChild
+                                className="w-full justify-end text-right h-10 px-3"
+                              >
+                                <Link
+                                  href={signInHref || '#'}
+                                  onClick={() => {
+                                    setIsPopoverOpen(false);
+                                    if (onSignInClick) onSignInClick();
+                                  }}
+                                >
+                                  {signInText}
+                                </Link>
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                variant="ghost"
+                                asChild
+                                className="w-full justify-end text-right h-10 px-3"
+                              >
+                                <Link
+                                  href={cartHref || '#'}
+                                  onClick={() => {
+                                    setIsPopoverOpen(false);
+                                    if (onCartClick) onCartClick();
+                                  }}
+                                >
+                                  <div className="flex w-full items-center justify-end gap-2">
+                                    <span>{cartText}</span>
+                                    {cartCount !== undefined && cartCount > 0 && (
+                                      <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1 text-xs font-medium text-primary">
+                                        {cartCount}
+                                      </span>
+                                    )}
+                                  </div>
+                                </Link>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                className="w-full justify-end text-right h-10 px-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => {
+                                  setIsPopoverOpen(false);
+                                  signOut();
+                                }}
+                              >
+                                <LogOut className="mr-2 h-4 w-4" />
+                                Keluar
+                              </Button>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           </div>
 
           {!isMobile && (
             <div className="flex items-center gap-3">
-              {!user ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className="text-sm font-medium hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                >
-                  <Link
-                    href={signInHref || '#'}
-                    onClick={() => { // UBAH: Hapus (e)
-                      if (onSignInClick) onSignInClick();
-                    }}
-                  >
-                    {signInText}
-                  </Link>
-                </Button>
+              {isLoading ? (
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-9 w-20 rounded-md" />
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                </div>
               ) : (
                 <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    asChild
-                    className="text-sm font-medium px-4 h-9 rounded-md cursor-pointer"
-                  >
-                    <Link
-                      href={cartHref || '#'}
-                      onClick={() => { // UBAH: Hapus (e)
-                        if (onCartClick) onCartClick();
-                      }}
+                  {!user ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      className="text-sm font-medium hover:bg-accent hover:text-accent-foreground cursor-pointer"
                     >
-                      <span className="flex text-primary items-baseline gap-2">
-                        <FaShoppingCart />
-                        <span className="text-primary text-xs">
-                          {cartCount}
-                        </span>
-                      </span>
-                    </Link>
-                  </Button>
-                  
-                  {/* DROPDOWN USER */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Avatar className="cursor-pointer h-9 w-9 hover:opacity-80 transition-opacity">
-                        <AvatarImage src={user.user_metadata.avatar_url} alt="@user" />
-                        <AvatarFallback>{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel className='overflow-x-auto'>{user.user_metadata.full_name}</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href="/profile" className="cursor-pointer w-full flex items-center">
-                           <UserIcon className="mr-2 h-4 w-4" /> Profile
-                        </Link>
-                      </DropdownMenuItem>
-                       <DropdownMenuItem asChild>
-                        <Link href="/dashboard" className="cursor-pointer w-full flex items-center">
-                          <MdDashboard className="mr-2 h-4 w-4" /> Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        onClick={handleSignOut}
-                        className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                      <Link
+                        href={signInHref || '#'}
+                        onClick={() => {
+                          if (onSignInClick) onSignInClick();
+                        }}
                       >
-                        <LogOut className="mr-2 h-4 w-4" /> Keluar
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                        {signInText}
+                      </Link>
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        asChild
+                        className="text-sm font-medium px-4 h-9 rounded-md cursor-pointer"
+                      >
+                        <Link
+                          href={cartHref || '#'}
+                          onClick={() => {
+                            if (onCartClick) onCartClick();
+                          }}
+                        >
+                          <span className="flex text-primary items-baseline gap-2">
+                            <FaShoppingCart />
+                            <span className="text-primary text-xs">
+                              {cartCount}
+                            </span>
+                          </span>
+                        </Link>
+                      </Button>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Avatar className="cursor-pointer h-9 w-9 hover:opacity-80 transition-opacity">
+                            <AvatarImage src={user.user_metadata.avatar_url} alt="@user" />
+                            <AvatarFallback>{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                          <DropdownMenuLabel className='overflow-x-auto'>{user.user_metadata.full_name}</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link href="/profile" className="cursor-pointer w-full flex items-center">
+                              Profile
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href="/dashboard" className="cursor-pointer w-full flex items-center">
+                              Dashboard
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => signOut()}
+                            className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                          >
+                            <LogOut className="mr-2 h-4 w-4" /> Keluar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </>
+                  )}
                 </>
               )}
             </div>

@@ -1,4 +1,3 @@
-"use strict";
 "use client";
 
 import { getSupabaseBrowserClient } from "@/utils/supabase/client";
@@ -10,17 +9,20 @@ import {
   useState,
   ReactNode,
 } from "react";
+import { useRouter } from "next/navigation";
 
 type AuthContextType = {
   session: Session | null;
   user: User | null;
   isLoading: boolean;
+  signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   isLoading: true,
+  signOut: async () => {},
 });
 
 export const useAuth = () => {
@@ -29,16 +31,33 @@ export const useAuth = () => {
 
 export default function AuthSessionProvider({
   children,
+  initialUser,
 }: {
   children: ReactNode;
+  initialUser: User | null;
 }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(initialUser);
+  const [isLoading, setIsLoading] = useState(!initialUser);
   const supabase = getSupabaseBrowserClient();
+  const router = useRouter();
+
+  const signOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
+      router.refresh();
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const fetchSession = async () => {
+      if (!initialUser) setIsLoading(true);
+      
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -60,10 +79,10 @@ export default function AuthSessionProvider({
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [initialUser, supabase]);
 
   return (
-    <AuthContext.Provider value={{ session, user, isLoading }}>
+    <AuthContext.Provider value={{ session, user, isLoading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
