@@ -6,7 +6,7 @@ import { Navbar04 } from "@/components/ui/shadcn-io/navbar-04";
 import { Toaster } from "sonner";
 import { createClient } from "@/utils/supabase/server";
 import Footer from "@/components/ui/personal/layout/Footer";
-import AuthSessionProvider from "@/components/providers/AuthSessionProvider";
+import AuthSessionProvider from "@/components/ui/personal/layout/AuthSessionProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +44,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <AuthSessionProvider initialUser={user}>
+            
             <Navbar04 user={user} />
             {children}
             <Toaster />

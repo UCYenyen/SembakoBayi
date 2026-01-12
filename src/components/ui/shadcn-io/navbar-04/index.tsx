@@ -29,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/shadcn-ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/components/providers/AuthSessionProvider';
+import { useAuth } from '@/components/ui/personal/layout/AuthSessionProvider';
 import { User } from '@supabase/supabase-js';
 
 const Logo = (props: React.ComponentProps<'svg'>) => {
@@ -263,10 +263,10 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                         asChild
                         className="w-full justify-end text-right font-medium h-10 px-3"
                       >
-                        <Link href="/profile"
+                        <Link href="/dashboard/profile"
                           onClick={() => setIsPopoverOpen(false)}
                         >
-                          Profile
+                          Profil
                         </Link>
                       </Button>
                       <Button
@@ -275,7 +275,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                         className="w-full justify-end text-right font-medium h-10 px-3"
                       >
                         <Link href="/dashboard" onClick={() => setIsPopoverOpen(false)}>
-                          Dashboard
+                          Dasbor
                         </Link>
                       </Button>
 
@@ -425,15 +425,16 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56">
                           <DropdownMenuLabel className='overflow-x-auto'>{user.user_metadata.full_name}</DropdownMenuLabel>
+                          <DropdownMenuLabel className='text-sm text-muted-foreground overflow-x-auto'>{user.email}</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem asChild>
-                            <Link href="/profile" className="cursor-pointer w-full flex items-center">
-                              Profile
+                            <Link href="/dashboard/profile" className="cursor-pointer w-full flex items-center">
+                              Profil
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <Link href="/dashboard" className="cursor-pointer w-full flex items-center">
-                              Dashboard
+                              Dasbor
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />

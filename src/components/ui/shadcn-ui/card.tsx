@@ -15,6 +15,19 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+function CardProduct({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "bg-[#F4F5FF] text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -89,4 +102,5 @@ export {
   CardAction,
   CardDescription,
   CardContent,
+  CardProduct,
 }

@@ -1,4 +1,6 @@
 import { Metadata } from "next"
+import HeroSection from "@/components/ui/personal/pages/home/HeroSection"
+import TopProductsSection from "@/components/ui/personal/pages/home/TopProductsSection"
 
 export const metadata: Metadata = {
   title: "Beranda - Sembako Bayi",
@@ -7,8 +9,9 @@ export const metadata: Metadata = {
 
 export default function page() {
   return (
-    <>
-      
-    </>
+    <div className="flex flex-col items-center justify-center py-24 relative">
+      <HeroSection />
+      <TopProductsSection />
+    </div>
   )
 }

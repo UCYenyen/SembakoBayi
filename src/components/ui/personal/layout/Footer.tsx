@@ -42,9 +42,9 @@ export default function Footer() {
                         <div className="w-full md:w-fit flex flex-col items-center md:items-start">
                             <h3 className="text-xl font-bold border-b border-gray-600 pb-2 w-full md:w-fit md:border-none mb-2">Tautan Cepat</h3>
                             <nav className="flex flex-col gap-3">
-                                <a href="/" className="hover:underline text-lg transition-colors">Home</a>
-                                <a href="/shop" className="hover:underline text-lg transition-colors">Shop</a>
-                                <a href="/dashboard" className="hover:underline text-lg transition-colors">Dashboard</a>
+                                <a href="/" className="hover:underline text-lg transition-colors">Beranda</a>
+                                <a href="/shop" className="hover:underline text-lg transition-colors">Belanja</a>
+                                <a href="/dashboard" className="hover:underline text-lg transition-colors">Dasbor</a>
                             </nav>
                         </div>
                     </div>
