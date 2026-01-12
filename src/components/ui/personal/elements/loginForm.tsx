@@ -52,6 +52,7 @@ export default function LoginForm() {
           toast.success("Login Berhasil", {
             description: "Mengalihkan ke dashboard...",
           });
+          window.location.href = "/";
         }
       } catch (error) {
         toast.error("Terjadi Kesalahan", {
@@ -77,7 +78,7 @@ export default function LoginForm() {
         >
           {form.formState.errors.root && (
             <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-2 text-sm text-destructive font-medium border border-destructive/20">
-              ⚠️ {form.formState.errors.root.message}
+              {form.formState.errors.root.message}
             </div>
           )}
 

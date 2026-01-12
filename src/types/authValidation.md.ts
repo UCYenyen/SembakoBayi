@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isValidPhoneNumber } from "react-phone-number-input";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 export const loginSchema = z.object({
   email: z

@@ -1,7 +1,6 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { loginSchema, registerSchema, type LoginValues, type RegisterValues } from '@/types/authValidation.md' 
 
@@ -23,7 +22,6 @@ export async function signIn(data: LoginValues) {
     return { error: error.message }
   }
   revalidatePath('/', 'layout')
-  redirect('/')
 }
 export async function signUp(data: RegisterValues) {
   const validatedFields = registerSchema.safeParse(data);
@@ -50,6 +48,5 @@ export async function signUp(data: RegisterValues) {
   if (error) {
     return { error: error.message };
   }
-   revalidatePath('/', 'layout')
-  redirect("/login"); 
+  revalidatePath('/', 'layout')
 }

@@ -29,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/shadcn-ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/utils/supabase/client';
+import { getSupabaseBrowserClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 
 const Logo = (props: React.ComponentProps<'svg'>) => {
@@ -137,7 +137,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
     const searchId = useId();
-    const supabase = createClient();
+    const supabase = getSupabaseBrowserClient();
 
     useEffect(() => {
       const checkWidth = () => {
