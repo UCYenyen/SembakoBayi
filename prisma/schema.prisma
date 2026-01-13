@@ -14,16 +14,16 @@ datasource db {
 }
 
 model User {
-  id            String    @id @db.Uuid
-  name          String?
-  email         String    @unique
-  role          UserRole  @default(GUEST)
-  points        Int       @default(0)
-  cart          Cart?
-  orders        Order[]
-  addresses     Address[]
-  testimonies   Testimony[]
-  userVouchers  UserVoucher[]
+  id           String        @id @db.Uuid
+  name         String?
+  email        String        @unique
+  role         UserRole      @default(GUEST)
+  points       Int           @default(0)
+  cart         Cart?
+  orders       Order[]
+  addresses    Address[]
+  testimonies  Testimony[]
+  userVouchers UserVoucher[]
 }
 
 enum UserRole {
@@ -33,37 +33,40 @@ enum UserRole {
 }
 
 model Address {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId        String   @db.Uuid
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  label         String
-  isDefault     Boolean  @default(false)
-  provinceId    String
-  province      String
-  cityId        String
-  city          String
-  district      String?
-  postalCode    String
-  fullAddress   String   @db.Text
-  latitude      Float?
-  longitude     Float?
-  noteToDriver  String?
-  orders        Order[]
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String  @db.Uuid
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label        String
+  isDefault    Boolean @default(false)
+  provinceId   String
+  province     String
+  cityId       String
+  city         String
+  district     String?
+  postalCode   String
+  fullAddress  String  @db.Text
+  latitude     Float?
+  longitude    Float?
+  noteToDriver String?
+  orders       Order[]
 }
 
 model Product {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
+  slug        String      @unique
+  isHidden   Boolean     @default(false)
   description String
-  price       Decimal  @db.Decimal(12, 2)
-  onSale      Boolean  @default(false)
-  promoPrice  Decimal? @db.Decimal(12, 2)
-  stock       Int      @default(0)
-  weight      Int      @default(0) 
-  brandId     String   @db.Uuid
-  brand       Brand    @relation(fields: [brandId], references: [id])
-  categoryId  String   @db.Uuid
-  category    Category @relation(fields: [categoryId], references: [id])
+  imageUrl    String
+  price       BigInt      @db.BigInt
+  onSale      Boolean     @default(false)
+  promoPrice  Decimal?    @db.Decimal(12, 2)
+  stock       Int         @default(0)
+  weight      Decimal     @default(0) @db.Decimal(12, 2)
+  brandId     String      @db.Uuid
+  brand       Brand       @relation(fields: [brandId], references: [id])
+  categoryId  String      @db.Uuid
+  category    Category    @relation(fields: [categoryId], references: [id])
   vendors     Vendor[]
   cartItems   CartItem[]
   orderItems  OrderItem[]
@@ -71,12 +74,12 @@ model Product {
 }
 
 model Category {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String
-  parentId  String?    @db.Uuid
-  parent    Category?  @relation("SubCategories", fields: [parentId], references: [id])
-  children  Category[] @relation("SubCategories")
-  products  Product[]
+  id       String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name     String
+  parentId String?    @db.Uuid
+  parent   Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children Category[] @relation("SubCategories")
+  products Product[]
 }
 
 model Brand {
@@ -163,29 +166,29 @@ enum MediaType {
 }
 
 model Voucher {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code         String   @unique
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code         String        @unique
   pointsNeeded Int
   discount     Decimal
-  isBroadcast  Boolean  @default(false)
+  isBroadcast  Boolean       @default(false)
   userVouchers UserVoucher[]
 }
 
 model UserVoucher {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String   @db.Uuid
-  user      User     @relation(fields: [userId], references: [id])
-  voucherId String   @db.Uuid
-  voucher   Voucher  @relation(fields: [voucherId], references: [id])
-  isUsed    Boolean  @default(false)
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String  @db.Uuid
+  user      User    @relation(fields: [userId], references: [id])
+  voucherId String  @db.Uuid
+  voucher   Voucher @relation(fields: [voucherId], references: [id])
+  isUsed    Boolean @default(false)
 }
 
 model Event {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String
-  content     String
-  imageUrl    String?
-  startDate   DateTime
-  endDate     DateTime
-  isActive    Boolean  @default(true)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String
+  content   String
+  imageUrl  String?
+  startDate DateTime
+  endDate   DateTime
+  isActive  Boolean  @default(true)
 }

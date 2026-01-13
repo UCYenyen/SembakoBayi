@@ -1,4 +1,10 @@
 import ShopSection from '@/components/ui/personal/pages/shop/ShopSection'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Belanja - SembakoBayi',
+  description: 'Beli kebutuhan bayi Anda dengan mudah di SembakoBayi. Temukan berbagai produk berkualitas untuk si kecil. Belanja sekarang dan nikmati kemudahan berbelanja online!',
+}
 
 export default function ShopPage() {
   const dummyProducts = Array.from({ length: 12 }).map((_, i) => ({
