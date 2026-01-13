@@ -9,7 +9,6 @@ const pool = new Pool({ connectionString })
 const adapter = new PrismaPg(pool)
 
 const prismaClientSingleton = () => {
-  // Pass 'adapter' ke constructor sesuai pesan error
   return new PrismaClient({ adapter })
 }
 

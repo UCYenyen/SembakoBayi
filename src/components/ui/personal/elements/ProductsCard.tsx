@@ -15,7 +15,7 @@ export default function ProductsCard({ name, rating, imageSrc, price, isOnSale, 
     return (
         <CardProduct className=''>
             <CardHeader className="space-y-1 relative flex flex-col justify-start items-center">
-                <Image src={imageSrc} alt={name} width={900} height={900} className="h-auto z-1 w-full rounded-lg" />
+                <Image src={imageSrc} alt={name} width={900} height={900} draggable="false" loading='lazy' className="h-auto z-1 w-full rounded-lg" />
                 {isOnSale && (
                     <div className='absolute -top-10 px-2 py-1 rounded-lg text-sm bg-destructive text-white uppercase font-bold z-2'>Promo</div>
                 )}
@@ -43,7 +43,7 @@ export default function ProductsCard({ name, rating, imageSrc, price, isOnSale, 
                 </CardDescription>
             </CardContent>
 
-            <CardFooter className="flex flex-col space-y-4">
+            <CardFooter className="flex flex-col space-y-4 h-full items-end justify-end">
                 <Button className="w-full flex gap-2 justify-center items-center"><PlusIcon className="h-4 w-4" /> Keranjang</Button>
                 <Button variant="outline" className="w-full">Lihat Detail</Button>
             </CardFooter>

@@ -36,8 +36,8 @@ export default function HeroSection() {
                 </CarouselContent>
             </Carousel>
             <div className="relative w-full mt-12">
-                <Image src="/images/misc/bg-waves.svg" draggable="false" width={900} height={900} alt="background waves" className="h-auto absolute z-1 bottom-6 md:bottom-14 left-0 w-full" />
-                <Image src="/images/misc/fr-waves.svg" draggable="false" width={900} height={900} alt="front waves" className="h-auto relative z-2 bottom-0 left-0 w-full" />
+                <Image src="/images/misc/bg-waves.svg" draggable="false" width={900} height={900} loading={"eager"} alt="background waves" className="h-auto absolute z-1 bottom-6 md:bottom-14 left-0 w-full" />
+                <Image src="/images/misc/fr-waves.svg" draggable="false" width={900} height={900} loading={"eager"} alt="front waves" className="h-auto relative z-2 bottom-0 left-0 w-full" />
             </div>
         </>
     )

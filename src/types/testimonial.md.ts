@@ -4,4 +4,5 @@ export interface TestimonialCardProps {
   imageSrc: string;
   description: string;
   rating: number;
+  extraClasses?: string;
 }
