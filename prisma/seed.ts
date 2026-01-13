@@ -54,6 +54,7 @@ async function main() {
     await prisma.product.create({
       data: {
         name: faker.commerce.productName(),
+        slug: faker.helpers.slugify(faker.commerce.productName()).toLowerCase() + '-' + faker.string.alphanumeric(5).toLowerCase(),
         description: faker.commerce.productDescription(),
         price: BigInt(faker.commerce.price({ min: 10000, max: 5000000, dec: 0 })),
         stock: faker.number.int({ min: 0, max: 100 }),

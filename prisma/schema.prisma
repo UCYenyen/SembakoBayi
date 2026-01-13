@@ -19,6 +19,7 @@ model User {
   email        String        @unique
   role         UserRole      @default(GUEST)
   points       Int           @default(0)
+  phone   String
   cart         Cart?
   orders       Order[]
   addresses    Address[]

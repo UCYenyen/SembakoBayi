@@ -1,4 +1,4 @@
-import { RegisterForm } from "@/components/ui/personal/elements/registerForm";
+import { RegisterForm } from "@/components/ui/personal/elements/RegisterForm";
 
 export default function RegisterPage() {
   return (

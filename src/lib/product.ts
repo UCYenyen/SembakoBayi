@@ -1,6 +1,6 @@
 import prisma from "./prisma";
 
-export async function getAllProducts() {
+export async function getAllFeaturedProducts() {
   return prisma.product.findMany({
     include: {
       brand: true,
@@ -14,4 +14,16 @@ export async function getAllProducts() {
   });
 }
 
-export async function getProductDetails()
+export async function getProductDetails(
+  slug: string
+){
+  return prisma.product.findUnique({
+    where: {
+      slug,
+    },
+    include: {
+      brand: true,
+      category: true,
+    },
+  });
+}

@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react"
 import Link from "next/link"
 
 import { registerSchema, type RegisterValues } from "@/validations/authValidation.md"
-import { signIn, signUp } from "@/lib/action/auth"
+import { signUp } from "@/lib/action/auth"
 
 import { Button } from "@/components/ui/shadcn-ui/button"
 import {
