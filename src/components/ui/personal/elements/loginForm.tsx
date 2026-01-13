@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
-import { loginSchema, type LoginValues } from "@/types/authValidation.md"; 
+import { loginSchema, type LoginValues } from "@/validations/authValidation.md"; 
 import { signIn } from "@/lib/action/auth";
 
 import { Button } from "@/components/ui/shadcn-ui/button";

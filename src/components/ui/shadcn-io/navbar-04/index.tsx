@@ -108,8 +108,8 @@ export interface Navbar04Props extends React.HTMLAttributes<HTMLElement> {
 }
 
 const defaultNavigationLinks: Navbar04NavItem[] = [
-  { href: '#', label: 'Belanja' },
-  { href: '#', label: 'Voucher' },
+  { href: '/shop', label: 'Belanja' },
+  { href: '/vouchers', label: 'Voucher' },
 ];
 
 export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
@@ -124,7 +124,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
       cartText = 'Keranjang',
       cartHref = '/cart',
       cartCount = 2,
-      searchPlaceholder = 'Telusuri...',
+      searchPlaceholder = 'Telusuri produk...',
       onSignInClick,
       onCartClick,
       onSearchSubmit,
@@ -217,11 +217,11 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                 </NavigationMenu>
               )}
 
-              <form onSubmit={handleSearchSubmit} className="relative">
+              <form onSubmit={handleSearchSubmit} className="relative w-full">
                 <Input
                   id={searchId}
                   name="search"
-                  className="peer h-8 ps-8 pe-2"
+                  className="peer h-8 ps-8 pe-2 w-full"
                   placeholder={searchPlaceholder}
                   type="search"
                 />

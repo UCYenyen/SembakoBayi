@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
-import { loginSchema, registerSchema, type LoginValues, type RegisterValues } from '@/types/authValidation.md' 
+import { loginSchema, registerSchema, type LoginValues, type RegisterValues } from '@/validations/authValidation.md' 
 
 export async function signIn(data: LoginValues) {
   const validatedFields = loginSchema.safeParse(data)
