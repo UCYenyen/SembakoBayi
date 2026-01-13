@@ -9,17 +9,37 @@ import {
 import Image from 'next/image'
 import { Button } from '@/components/ui/shadcn-ui/button'
 import { PlusIcon } from 'lucide-react'
-
-export default function ProductsCard() {
+import { ProductCardProps } from '@/types/product.md'
+import { FaStar } from 'react-icons/fa6'
+export default function ProductsCard({ name, rating, imageSrc, price, isOnSale, discountAmount }: ProductCardProps) {
     return (
-        <CardProduct>
-            <CardHeader className="space-y-1">
-                <Image src="/images/products/Apel50.webp" alt="apel" width={900} height={900} className="h-auto z-1 w-full rounded-lg" />
+        <CardProduct className=''>
+            <CardHeader className="space-y-1 relative flex flex-col justify-start items-center">
+                <Image src={imageSrc} alt={name} width={900} height={900} className="h-auto z-1 w-full rounded-lg" />
+                {isOnSale && (
+                    <div className='absolute -top-10 px-2 py-1 rounded-lg text-sm bg-destructive text-white uppercase font-bold z-2'>Promo</div>
+                )}
+                {/* <div className='absolute bottom-4 right-7  md:bottom-6 md:right-8 px-1 py-1 md:px-4 md:py-2 rounded-lg text-sm md:text-lg z-2 bg-primary/70 text-primary-foreground'>{stock} pcs</div> */}
             </CardHeader>
             <CardContent>
-                <CardTitle className="text-2xl font-bold text-center">Nama Produk</CardTitle>
+                <div className='flex gap-1 items-center justify-center pb-4'>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                        <FaStar key={index} className={index < rating ? "text-amber-300" : "text-muted-foreground"} />
+                    ))}
+                </div>
+                <CardTitle className="text-xl font-bold text-center">{name}</CardTitle>
                 <CardDescription className="text-center">
-                    Rp 00.000,00
+                    {isOnSale ? (
+                        <div className='flex flex-col md:flex-row md:space-x-2 items-center justify-center'>
+                            <span className="text-sm text-red-400 line-through">
+                                Rp {(price).toLocaleString('id-ID')}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                                Rp {(price - discountAmount).toLocaleString('id-ID')}
+                            </span>
+                        </div>
+                    ) : <>  Rp {price.toLocaleString('id-ID')}</>}
+
                 </CardDescription>
             </CardContent>
 

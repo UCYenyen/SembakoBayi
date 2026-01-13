@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import HeroSection from "@/components/ui/personal/pages/home/HeroSection"
 import TopProductsSection from "@/components/ui/personal/pages/home/TopProductsSection"
+import TestimonialsSection from "@/components/ui/personal/pages/home/TestimonialsSection"
 
 export const metadata: Metadata = {
   title: "Beranda - Sembako Bayi",
@@ -12,6 +13,7 @@ export default function page() {
     <div className="flex flex-col items-center justify-center py-24 relative">
       <HeroSection />
       <TopProductsSection />
+      <TestimonialsSection />
     </div>
   )
 }
