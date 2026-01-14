@@ -6,19 +6,20 @@ CREATE TYPE "MediaType" AS ENUM ('IMAGE', 'VIDEO');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" UUID NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT,
     "email" TEXT NOT NULL,
     "role" "UserRole" NOT NULL DEFAULT 'GUEST',
     "points" INTEGER NOT NULL DEFAULT 0,
+    "phone" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Address" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "userId" UUID NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "label" TEXT NOT NULL,
     "isDefault" BOOLEAN NOT NULL DEFAULT false,
     "provinceId" TEXT NOT NULL,
@@ -37,32 +38,35 @@ CREATE TABLE "Address" (
 
 -- CreateTable
 CREATE TABLE "Product" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "isHidden" BOOLEAN NOT NULL DEFAULT false,
     "description" TEXT NOT NULL,
-    "price" DECIMAL(12,2) NOT NULL,
+    "imageUrl" TEXT NOT NULL,
+    "price" BIGINT NOT NULL,
     "onSale" BOOLEAN NOT NULL DEFAULT false,
     "promoPrice" DECIMAL(12,2),
     "stock" INTEGER NOT NULL DEFAULT 0,
-    "weight" INTEGER NOT NULL DEFAULT 0,
-    "brandId" UUID NOT NULL,
-    "categoryId" UUID NOT NULL,
+    "weight" DECIMAL(12,2) NOT NULL DEFAULT 0,
+    "brandId" TEXT NOT NULL,
+    "categoryId" TEXT NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Category" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "parentId" UUID,
+    "parentId" TEXT,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Brand" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
 
     CONSTRAINT "Brand_pkey" PRIMARY KEY ("id")
@@ -70,7 +74,7 @@ CREATE TABLE "Brand" (
 
 -- CreateTable
 CREATE TABLE "Vendor" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
 
     CONSTRAINT "Vendor_pkey" PRIMARY KEY ("id")
@@ -78,8 +82,8 @@ CREATE TABLE "Vendor" (
 
 -- CreateTable
 CREATE TABLE "Cart" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "userId" UUID NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Cart_pkey" PRIMARY KEY ("id")
@@ -87,9 +91,9 @@ CREATE TABLE "Cart" (
 
 -- CreateTable
 CREATE TABLE "CartItem" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "cartId" UUID NOT NULL,
-    "productId" UUID NOT NULL,
+    "id" TEXT NOT NULL,
+    "cartId" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT "CartItem_pkey" PRIMARY KEY ("id")
@@ -97,9 +101,9 @@ CREATE TABLE "CartItem" (
 
 -- CreateTable
 CREATE TABLE "Order" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "userId" UUID NOT NULL,
-    "addressId" UUID NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "addressId" TEXT NOT NULL,
     "recipientName" TEXT NOT NULL,
     "recipientPhone" TEXT NOT NULL,
     "shippingCost" DECIMAL(12,2) NOT NULL,
@@ -116,9 +120,9 @@ CREATE TABLE "Order" (
 
 -- CreateTable
 CREATE TABLE "OrderItem" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "orderId" UUID NOT NULL,
-    "productId" UUID NOT NULL,
+    "id" TEXT NOT NULL,
+    "orderId" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
     "price" DECIMAL(12,2) NOT NULL,
     "quantity" INTEGER NOT NULL,
 
@@ -127,11 +131,11 @@ CREATE TABLE "OrderItem" (
 
 -- CreateTable
 CREATE TABLE "Testimony" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL,
     "rating" INTEGER NOT NULL,
     "description" TEXT NOT NULL,
-    "userId" UUID NOT NULL,
-    "productId" UUID NOT NULL,
+    "userId" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Testimony_pkey" PRIMARY KEY ("id")
@@ -139,17 +143,17 @@ CREATE TABLE "Testimony" (
 
 -- CreateTable
 CREATE TABLE "Media" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL,
     "url" TEXT NOT NULL,
     "type" "MediaType" NOT NULL,
-    "testimonyId" UUID NOT NULL,
+    "testimonyId" TEXT NOT NULL,
 
     CONSTRAINT "Media_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Voucher" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "pointsNeeded" INTEGER NOT NULL,
     "discount" DECIMAL(65,30) NOT NULL,
@@ -160,9 +164,9 @@ CREATE TABLE "Voucher" (
 
 -- CreateTable
 CREATE TABLE "UserVoucher" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "userId" UUID NOT NULL,
-    "voucherId" UUID NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "voucherId" TEXT NOT NULL,
     "isUsed" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "UserVoucher_pkey" PRIMARY KEY ("id")
@@ -170,7 +174,7 @@ CREATE TABLE "UserVoucher" (
 
 -- CreateTable
 CREATE TABLE "Event" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "imageUrl" TEXT,
@@ -183,8 +187,8 @@ CREATE TABLE "Event" (
 
 -- CreateTable
 CREATE TABLE "_ProductToVendor" (
-    "A" UUID NOT NULL,
-    "B" UUID NOT NULL,
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
 
     CONSTRAINT "_ProductToVendor_AB_pkey" PRIMARY KEY ("A","B")
 );
@@ -193,10 +197,16 @@ CREATE TABLE "_ProductToVendor" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Product_slug_key" ON "Product"("slug");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Cart_userId_key" ON "Cart"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Order_transactionId_key" ON "Order"("transactionId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Media_testimonyId_key" ON "Media"("testimonyId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Voucher_code_key" ON "Voucher"("code");

@@ -25,12 +25,12 @@ export const registerSchema = z
       .string()
       .min(1, { message: "Email wajib diisi." })
       .email({ message: "Format email tidak valid." }),
-    phone: z
-    .string()
-    .min(1, { message: "Nomor telepon wajib diisi" })
-    .refine((val) => isValidPhoneNumber(val), {
-      message: "Nomor telepon tidak valid",
-    }),
+    // phone: z
+    // .string()
+    // .min(1, { message: "Nomor telepon wajib diisi" })
+    // .refine((val) => isValidPhoneNumber(val), {
+    //   message: "Nomor telepon tidak valid",
+    // }).optional(),
     password: z
       .string()
       .min(1, { message: "Password wajib diisi." })

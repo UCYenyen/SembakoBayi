@@ -5,8 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -14,17 +13,25 @@ datasource db {
 }
 
 model User {
-  id           String        @id @db.Uuid
-  name         String?
-  email        String        @unique
-  role         UserRole      @default(GUEST)
-  points       Int           @default(0)
-  phone   String
-  cart         Cart?
-  orders       Order[]
-  addresses    Address[]
-  testimonies  Testimony[]
-  userVouchers UserVoucher[]
+  id            String        @id @default(cuid())
+  name          String?
+  email         String        @unique
+  role          UserRole      @default(GUEST)
+  points        Int           @default(0)
+  phoneNumber         String?
+  cart          Cart?
+  orders        Order[]
+  addresses     Address[]
+  testimonies   Testimony[]
+  userVouchers  UserVoucher[]
+  emailVerified Boolean       @default(false)
+  image         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
 }
 
 enum UserRole {
@@ -34,8 +41,8 @@ enum UserRole {
 }
 
 model Address {
-  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId       String  @db.Uuid
+  id           String  @id @default(cuid())
+  userId       String
   user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   label        String
   isDefault    Boolean @default(false)
@@ -53,20 +60,20 @@ model Address {
 }
 
 model Product {
-  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String      @id @default(cuid())
   name        String
   slug        String      @unique
-  isHidden   Boolean     @default(false)
+  isHidden    Boolean     @default(false)
   description String
   imageUrl    String
-  price       BigInt      @db.BigInt
+  price       BigInt
   onSale      Boolean     @default(false)
   promoPrice  Decimal?    @db.Decimal(12, 2)
   stock       Int         @default(0)
   weight      Decimal     @default(0) @db.Decimal(12, 2)
-  brandId     String      @db.Uuid
+  brandId     String
   brand       Brand       @relation(fields: [brandId], references: [id])
-  categoryId  String      @db.Uuid
+  categoryId  String
   category    Category    @relation(fields: [categoryId], references: [id])
   vendors     Vendor[]
   cartItems   CartItem[]
@@ -75,48 +82,48 @@ model Product {
 }
 
 model Category {
-  id       String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String     @id @default(cuid())
   name     String
-  parentId String?    @db.Uuid
+  parentId String?
   parent   Category?  @relation("SubCategories", fields: [parentId], references: [id])
   children Category[] @relation("SubCategories")
   products Product[]
 }
 
 model Brand {
-  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String    @id @default(cuid())
   name     String
   products Product[]
 }
 
 model Vendor {
-  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String    @id @default(cuid())
   name     String
   products Product[]
 }
 
 model Cart {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String     @unique @db.Uuid
+  id        String     @id @default(cuid())
+  userId    String     @unique
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
   updatedAt DateTime   @updatedAt
 }
 
 model CartItem {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  cartId    String  @db.Uuid
+  id        String  @id @default(cuid())
+  cartId    String
   cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  productId String  @db.Uuid
+  productId String
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int     @default(1)
 }
 
 model Order {
-  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId         String      @db.Uuid
+  id             String      @id @default(cuid())
+  userId         String
   user           User        @relation(fields: [userId], references: [id])
-  addressId      String      @db.Uuid
+  addressId      String
   address        Address     @relation(fields: [addressId], references: [id])
   recipientName  String
   recipientPhone String
@@ -132,32 +139,32 @@ model Order {
 }
 
 model OrderItem {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  orderId   String  @db.Uuid
+  id        String  @id @default(cuid())
+  orderId   String
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId String  @db.Uuid
+  productId String
   product   Product @relation(fields: [productId], references: [id])
   price     Decimal @db.Decimal(12, 2)
   quantity  Int
 }
 
 model Testimony {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String   @id @default(cuid())
   rating      Int
   description String
-  userId      String   @db.Uuid
+  userId      String
   user        User     @relation(fields: [userId], references: [id])
-  productId   String   @db.Uuid
+  productId   String
   product     Product  @relation(fields: [productId], references: [id])
   media       Media[]
   createdAt   DateTime @default(now())
 }
 
 model Media {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String    @id @default(cuid())
   url         String
   type        MediaType
-  testimonyId String    @db.Uuid
+  testimonyId String    @default(cuid()) @unique
   testimony   Testimony @relation(fields: [testimonyId], references: [id], onDelete: Cascade)
 }
 
@@ -167,7 +174,7 @@ enum MediaType {
 }
 
 model Voucher {
-  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           String        @id @default(cuid())
   code         String        @unique
   pointsNeeded Int
   discount     Decimal
@@ -176,20 +183,68 @@ model Voucher {
 }
 
 model UserVoucher {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String  @db.Uuid
+  id        String  @id @default(cuid())
+  userId    String
   user      User    @relation(fields: [userId], references: [id])
-  voucherId String  @db.Uuid
+  voucherId String
   voucher   Voucher @relation(fields: [voucherId], references: [id])
   isUsed    Boolean @default(false)
 }
 
 model Event {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id        String   @id @default(cuid())
   title     String
   content   String
   imageUrl  String?
   startDate DateTime
   endDate   DateTime
   isActive  Boolean  @default(true)
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

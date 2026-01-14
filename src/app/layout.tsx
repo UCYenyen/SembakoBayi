@@ -3,10 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/themeProvider"
 import { Navbar04 } from "@/components/ui/shadcn-io/navbar-04";
-import { Toaster } from "sonner";
-import { createClient } from "@/utils/supabase/server";
+import { Toaster } from "@/components/ui/shadcn-ui/sonner";
 import Footer from "@/components/ui/personal/layout/Footer";
-import AuthSessionProvider from "@/components/ui/personal/layout/AuthSessionProvider";
+import { headers } from "next/headers"; 
+import { auth } from "@/lib/auth"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,10 +28,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user || null;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -43,13 +45,11 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthSessionProvider initialUser={user}>
-            
-            <Navbar04 user={user} />
-            {children}
-            <Toaster />
-            <Footer />
-          </AuthSessionProvider>
+          {/* Kirim data user ke Navbar */}
+          <Navbar04 user={user} />
+          {children}
+          <Toaster />
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

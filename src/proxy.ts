@@ -1,9 +1,7 @@
 import { type NextRequest } from 'next/server'
-import { updateSession } from './utils/supabase/proxy'
 
 export async function proxy(request: NextRequest) {
-  // This updates the session ensuring the user stays logged in
-  return await updateSession(request)
+
 }
 
 export const config = {

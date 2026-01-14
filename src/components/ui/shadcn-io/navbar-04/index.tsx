@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useEffect, useState, useRef, useId } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Tambahan untuk redirect
 import { SearchIcon, LogOut } from 'lucide-react';
 import { FaShoppingCart } from "react-icons/fa";
 import { Button } from '@/components/ui/shadcn-ui/button';
@@ -29,8 +30,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/shadcn-ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/components/ui/personal/layout/AuthSessionProvider';
-import { User } from '@supabase/supabase-js';
+// Ganti import Supabase/Context lama ke Better Auth
+import { authClient } from '@/lib/auth-client'; 
+
+// Infer type User dari better-auth
+type User = typeof authClient.$Infer.Session.user;
 
 const Logo = (props: React.ComponentProps<'svg'>) => {
   return (
@@ -104,7 +108,7 @@ export interface Navbar04Props extends React.HTMLAttributes<HTMLElement> {
   onSignInClick?: () => void;
   onCartClick?: () => void;
   onSearchSubmit?: (query: string) => void;
-  user?: User | null;
+  user?: User | null; // Type User sekarang dari Better Auth
 }
 
 const defaultNavigationLinks: Navbar04NavItem[] = [
@@ -128,15 +132,36 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
       onSignInClick,
       onCartClick,
       onSearchSubmit,
+      user: propUser, // Rename prop user agar bisa digabung logicnya
       ...props
     },
     ref
   ) => {
+    const router = useRouter();
     const [isMobile, setIsMobile] = useState(false);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-    const { user, isLoading, signOut } = useAuth();
+    
+    // Gunakan useSession untuk reactivity client-side
+    const { data: session, isPending } = authClient.useSession();
+    
+    // Prioritaskan propUser (dari server/RootLayout) agar tidak flickering, fallback ke session client
+    const user = propUser || session?.user;
+    const isLoading = isPending && !propUser; // Loading hanya true jika tidak ada propUser DAN client sedang fetch
+
     const containerRef = useRef<HTMLElement>(null);
     const searchId = useId();
+
+    // Fungsi Sign Out Baru
+    const handleSignOut = async () => {
+        await authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    router.refresh(); // Refresh agar navbar update
+                    router.push("/login");
+                },
+            },
+        });
+    };
 
     useEffect(() => {
       const checkWidth = () => {
@@ -246,11 +271,13 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                       {user && (
                         <div className="flex flex-col items-end justify-center gap-3 p-2">
                           <Avatar className="h-10 w-10">
-                            <AvatarImage src={user.user_metadata.avatar_url} alt="@user" />
+                            {/* Better Auth menggunakan user.image */}
+                            <AvatarImage src={user.image || undefined} alt="@user" />
                             <AvatarFallback>{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="flex flex-col items-end overflow-hidden">
-                            <span className="font-medium">{user.user_metadata.full_name}</span>
+                             {/* Better Auth menggunakan user.name */}
+                            <span className="font-medium">{user.name}</span>
                             <span className="text-sm text-muted-foreground overflow-x-auto">{user.email}</span>
                           </div>
                         </div>
@@ -351,7 +378,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                                 className="w-full justify-end text-right h-10 px-3 text-destructive hover:text-destructive hover:bg-destructive/10"
                                 onClick={() => {
                                   setIsPopoverOpen(false);
-                                  signOut();
+                                  handleSignOut();
                                 }}
                               >
                                 <LogOut className="mr-2 h-4 w-4" />
@@ -419,12 +446,14 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Avatar className="cursor-pointer h-9 w-9 hover:opacity-80 transition-opacity">
-                            <AvatarImage src={user.user_metadata.avatar_url} alt="@user" />
+                             {/* Update data access */}
+                            <AvatarImage src={user.image || undefined} alt="@user" />
                             <AvatarFallback>{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56">
-                          <DropdownMenuLabel className='overflow-x-auto'>{user.user_metadata.full_name}</DropdownMenuLabel>
+                           {/* Update data access */}
+                          <DropdownMenuLabel className='overflow-x-auto'>{user.name}</DropdownMenuLabel>
                           <DropdownMenuLabel className='text-sm text-muted-foreground overflow-x-auto'>{user.email}</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem asChild>
@@ -439,7 +468,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => signOut()}
+                            onClick={() => handleSignOut()}
                             className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
                           >
                             <LogOut className="mr-2 h-4 w-4" /> Keluar
