@@ -1,5 +1,5 @@
 services:
-  ucyenyen_portfolio:
+  sb_app_new:
     container_name: sb_app_new
     build:
       context: .
