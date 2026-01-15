@@ -4,7 +4,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 import nodemailer from "nodemailer";
 import { Role } from "better-auth/plugins";
-import { sendWhatsAppMessage } from "./whatsapp";
+import { sendWhatsAppMessage } from "../utils/whatsapp";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -40,17 +40,18 @@ export const auth = betterAuth({
 
       try {
         await transporter.sendMail({
-          from: '"Nama Toko Anda" <no-reply@sembakobayi.com>',
+          from: '"SEMBAKO BAYI" <no-reply@sembakobayi.com>',
           to: user.email,
           subject: "Verifikasi Akun Anda",
           html: `
             <div style="font-family: Arial, sans-serif; padding: 20px;">
               <h2>Selamat Datang, ${user.name}!</h2>
-              <p>Terima kasih telah mendaftar. Silakan klik tombol di bawah ini untuk memverifikasi email Anda:</p>
+              <p>Terima kasih telah mendaftar di Sembako Bayi. Silakan klik tombol di bawah ini untuk memverifikasi email Anda:</p>
               <a href="${url}" style="background-color: #3F3142; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
                 Verifikasi Email
               </a>
               <p>Atau copy link ini: <br/> ${url}</p>
+              <p>Kami menunggu kehadiran Anda di Sembako Bayi!</p>
             </div>
           `,
         });
@@ -68,20 +69,12 @@ export const auth = betterAuth({
     phoneNumber({
       otpLength: 6,
       sendOTP: async ({ phoneNumber, code }) => {
-        const message = `
-      *🔒 Kode Verifikasi Sembako Bayi*
+        const message = `*🔒 Kode Verifikasi Sembako Bayi*
 
-      Kode OTP Anda:
-      ====================
-      *${code}*
-      ====================
+      Kode OTP Anda: *${code}*
 
-      Salin kode di atas untuk verifikasi akun Anda.
-
-      Jangan bagikan kode ini kepada siapapun demi keamanan akun Anda.
-
-      Terima kasih telah menggunakan Sembako Bayi!
-        `;
+      Salin kode di atas untuk verifikasi akun Anda. Jangan bagikan kode ini kepada siapapun demi keamanan akun Anda.
+      Terima kasih telah menggunakan Sembako Bayi!`;
         const result = await sendWhatsAppMessage(phoneNumber, message);
 
         if (!result.success) {
