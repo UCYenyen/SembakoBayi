@@ -13,12 +13,13 @@ datasource db {
 }
 
 model User {
-  id            String        @id @default(cuid())
-  name          String?
-  email         String        @unique
-  role          UserRole      @default(GUEST)
-  points        Int           @default(0)
-  phoneNumber         String?
+  id          String   @id @default(cuid())
+  name        String?
+  email       String   @unique
+  role        UserRole @default(GUEST)
+  points      Int      @default(0)
+  phoneNumber String?
+
   cart          Cart?
   orders        Order[]
   addresses     Address[]
@@ -30,6 +31,11 @@ model User {
   updatedAt     DateTime      @updatedAt
   sessions      Session[]
   accounts      Account[]
+
+  banned              Boolean?  @default(false)
+  banReason           String?
+  banExpires          DateTime?
+  phoneNumberVerified Boolean?
 
   @@map("user")
 }
@@ -211,6 +217,8 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@index([userId])
