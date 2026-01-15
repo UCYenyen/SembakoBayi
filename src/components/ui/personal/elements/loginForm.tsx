@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react"; // Menggunakan state loading manual atau transition
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -8,7 +8,6 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-// Pastikan import ini mengarah ke file .ts/.tsx, bukan .md
 import { loginSchema, type LoginValues } from "@/validations/authValidation.md"; 
 import { authClient } from "@/lib/utils/auth-client";
 
@@ -76,7 +75,7 @@ export default function LoginForm() {
   }
 
   return (
-    <Card className="w-full sm:max-w-112.5 shadow-lg"> 
+    <Card className="w-112.5 max-w-[80%] shadow-lg"> 
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center">Selamat Datang</CardTitle>
         <CardDescription className="text-center">

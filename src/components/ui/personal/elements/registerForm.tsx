@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react"; // Tambah Icon
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
 import { registerSchema, type RegisterValues } from "@/validations/authValidation.md";
@@ -72,7 +72,7 @@ export function RegisterForm() {
 
   return (
     <>
-      <Card className="w-full sm:max-w-112.5 shadow-lg">
+      <Card className="w-112.5 max-w-[80%] shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">Buat Akun Baru</CardTitle>
           <CardDescription>
