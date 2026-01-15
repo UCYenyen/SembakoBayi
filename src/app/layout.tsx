@@ -40,7 +40,7 @@ export default async function RootLayout({
       >
         <Navbar04 user={user} />
         {children}
-        <Toaster closeButton />
+        <Toaster toastOptions={{descriptionClassName: "text-muted-foreground"}} closeButton />
         <Footer />
       </body>
     </html>
