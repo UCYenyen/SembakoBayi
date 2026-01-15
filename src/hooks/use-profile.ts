@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { authClient } from '@/lib/utils/auth-client'
+import { profileSchema, type ProfileValues } from '@/validations/profileValidation.md'
 
 interface ProfileData {
     name: string;
@@ -15,7 +16,8 @@ export function useProfile(initialData?: Partial<ProfileData>) {
     const [displayPhone, setDisplayPhone] = useState("");
     const [isOtpDialogOpen, setIsOtpDialogOpen] = useState(false);
     const [otpCode, setOtpCode] = useState("");
-    
+    const [errors, setErrors] = useState<Partial<Record<keyof ProfileValues, string>>>({});
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -43,6 +45,10 @@ export function useProfile(initialData?: Partial<ProfileData>) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
+        
+        if (errors[id as keyof ProfileValues]) {
+            setErrors(prev => ({ ...prev, [id]: undefined }));
+        }
     };
 
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,13 +67,56 @@ export function useProfile(initialData?: Partial<ProfileData>) {
             ...prev,
             phoneNumber: val ? `0${val}` : '' 
         }));
+        
+        if (errors.phoneNumber) {
+            setErrors(prev => ({ ...prev, phoneNumber: undefined }));
+        }
+    };
+
+    const handleSave = async () => {
+        setIsLoading(true);
+        setErrors({});
+
+        const result = profileSchema.safeParse(formData);
+
+        if (!result.success) {
+            const fieldErrors: Partial<Record<keyof ProfileValues, string>> = {};
+            // GANTI .errors MENJADI .issues DI SINI
+            result.error.issues.forEach((err) => {
+                if (err.path[0]) {
+                    fieldErrors[err.path[0] as keyof ProfileValues] = err.message;
+                }
+            });
+            setErrors(fieldErrors);
+            toast.error("Mohon perbaiki input yang salah");
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            await authClient.updateUser({
+                name: formData.name,
+                image: null,
+                phoneNumber: formData.phoneNumber,
+            });
+            
+            toast.success("Profil berhasil diperbarui!");
+            router.refresh();
+        } catch (error) {
+            toast.error("Gagal menyimpan perubahan");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleSendVerification = async () => {
-        if (!formData.phoneNumber) {
-            toast.error("Masukkan nomor telepon terlebih dahulu");
+        const result = profileSchema.shape.phoneNumber.safeParse(formData.phoneNumber);
+        
+        if (!result.success) {
+            toast.error(result.error.issues[0].message); 
             return;
         }
+
         setIsLoading(true);
         try {
             await authClient.phoneNumber.sendOtp({ phoneNumber: formData.phoneNumber });
@@ -109,9 +158,11 @@ export function useProfile(initialData?: Partial<ProfileData>) {
         isOtpDialogOpen,
         setIsOtpDialogOpen,
         isLoading,
+        errors,
         handleChange,
         handlePhoneChange,
         handleSendVerification,
-        handleVerifyOtp
+        handleVerifyOtp,
+        handleSave
     };
 }

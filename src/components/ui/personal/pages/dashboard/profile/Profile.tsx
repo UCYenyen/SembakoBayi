@@ -43,6 +43,8 @@ export default function Profile() {
         handleChange,
         handleSendVerification,
         handleVerifyOtp,
+        handleSave,
+        errors,
         isLoading,
         isOtpDialogOpen,
         setIsOtpDialogOpen,
@@ -96,31 +98,33 @@ export default function Profile() {
                         </div>
 
                         <div className='space-y-2'>
-                            <Label htmlFor="name">Nama</Label>
+                            <Label htmlFor="name" className={errors.name ? "text-red-500" : ""}>Nama</Label>
                             <div className="relative">
                                 <Input
                                     id="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="pr-10"
+                                    className={`pr-10 ${errors.name ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                                 />
                                 <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none opacity-50" />
                             </div>
+                            {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                         </div>
 
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                             <div className='space-y-2'>
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email" className={errors.email ? "text-red-500" : ""}>Email</Label>
                                 <div className="relative">
                                     <Input
                                         id="email"
                                         type="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="pr-10"
+                                        className={`pr-10 ${errors.email ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                                     />
                                     <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none opacity-50" />
                                 </div>
+                                {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                             </div>
 
                             <div className='space-y-2'>
@@ -146,13 +150,14 @@ export default function Profile() {
                                     <Input
                                         id="phoneNumber"
                                         type="tel"
-                                        className="pl-24 pr-10"
+                                        className={`pl-24 pr-10 ${errors.phoneNumber ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                                         placeholder="812-3456-7890"
                                         value={displayPhone}
                                         onChange={handlePhoneChange}
                                     />
                                     <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none opacity-50" />
                                 </div>
+                                {errors.phoneNumber && <p className="text-sm text-red-500">{errors.phoneNumber}</p>}
 
                                 {!session.user.phoneNumberVerified && (
                                     <div className="pt-1">
@@ -201,7 +206,10 @@ export default function Profile() {
                 <CardFooter className='flex justify-between py-6 bg-slate-50/50 rounded-b-xl'>
                     <div className='flex gap-4'>
                         <Button variant="outline">Batalkan</Button>
-                        <Button disabled={isLoading}>Simpan Perubahan</Button>
+                        <Button disabled={isLoading} onClick={handleSave}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Simpan Perubahan
+                        </Button>
                     </div>
                 </CardFooter>
             </Card>
