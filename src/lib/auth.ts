@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
-import { phoneNumber } from "better-auth/plugins";
+import { phoneNumber, admin } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 import nodemailer from "nodemailer";
+import { Role } from "better-auth/plugins";
 import { sendWhatsAppMessage } from "./whatsapp";
 
 export const auth = betterAuth({
@@ -60,6 +61,10 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    admin({ 
+      adminRole: "ADMIN",  
+      defaultRole: "GUEST",
+    }),
     phoneNumber({
       otpLength: 6,
       sendOTP: async ({ phoneNumber, code }) => {

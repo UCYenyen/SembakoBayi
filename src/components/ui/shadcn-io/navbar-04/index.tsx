@@ -279,6 +279,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                              {/* Better Auth menggunakan user.name */}
                             <span className="font-medium">{user.name}</span>
                             <span className="text-sm text-muted-foreground overflow-x-auto">{user.email}</span>
+                            <span className="text-sm text-muted-foreground overflow-x-auto">{user.phoneNumber || ''}</span>
                           </div>
                         </div>
                       )}

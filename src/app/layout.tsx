@@ -40,7 +40,7 @@ export default async function RootLayout({
       >
         <Navbar04 user={user} />
         {children}
-        <Toaster />
+        <Toaster richColors closeButton containerAriaLabel="SEMBAKO BAYI" />
         <Footer />
       </body>
     </html>
