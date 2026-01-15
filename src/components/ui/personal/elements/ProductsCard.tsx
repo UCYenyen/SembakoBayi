@@ -15,7 +15,7 @@ export default function ProductsCard(product : ProductCardProps) {
     return (
         <CardProduct className=''>
             <CardHeader className="space-y-1 relative flex flex-col justify-start items-center">
-                <Image src={product.imageSrc} alt={product.name} width={900} height={900} draggable="false" loading='lazy' className="h-auto z-1 w-full rounded-lg" />
+                <Image unoptimized src={product.imageSrc} alt={product.name} width={900} height={900} draggable="false" loading='lazy' className="h-auto z-1 w-full rounded-lg aspect-square" />
                 {product.isOnSale && (
                     <div className='absolute -top-10 px-2 py-1 rounded-lg text-sm bg-destructive text-white uppercase font-bold z-2'>Promo</div>
                 )}

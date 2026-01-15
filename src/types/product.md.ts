@@ -6,6 +6,15 @@ export interface ProductCardProps{
     imageSrc: string;
     isOnSale: boolean;
     discountAmount: number;
+    category: {
+        id: string;
+        name: string;
+        parent_id: string;
+    };
+    brand: {
+        id: string;
+        name: string;
+    }
 }
 
 export interface Product extends ProductCardProps {
