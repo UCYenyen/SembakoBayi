@@ -5,7 +5,7 @@ import { Navbar04 } from "@/components/ui/shadcn-io/navbar-04";
 import { Toaster } from "@/components/ui/shadcn-ui/sonner";
 import Footer from "@/components/ui/personal/layout/Footer";
 import { headers } from "next/headers";
-import { auth } from "@/utils/auth";
+import { auth } from "@/lib/utils/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

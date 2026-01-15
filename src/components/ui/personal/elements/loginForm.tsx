@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 // Pastikan import ini mengarah ke file .ts/.tsx, bukan .md
 import { loginSchema, type LoginValues } from "@/validations/authValidation.md"; 
-import { authClient } from "@/utils/auth-client";
+import { authClient } from "@/lib/utils/auth-client";
 
 import { Button } from "@/components/ui/shadcn-ui/button";
 import {
