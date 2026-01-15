@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
+    "db:prod": "prisma migrate deploy",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "lint": "eslint"
   },
@@ -56,6 +57,7 @@
     "react-hook-form": "^7.71.0",
     "react-icons": "^5.5.0",
     "react-phone-number-input": "^3.4.14",
+    "sharp": "^0.34.5",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "vaul": "^1.1.2",
