@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/themeProvider"
 import { Navbar04 } from "@/components/ui/shadcn-io/navbar-04";
 import { Toaster } from "@/components/ui/shadcn-ui/sonner";
 import Footer from "@/components/ui/personal/layout/Footer";
-import { headers } from "next/headers"; 
-import { auth } from "@/lib/auth"; 
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,18 +38,10 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {/* Kirim data user ke Navbar */}
-          <Navbar04 user={user} />
-          {children}
-          <Toaster />
-          <Footer />
-        </ThemeProvider>
+        <Navbar04 user={user} />
+        {children}
+        <Toaster />
+        <Footer />
       </body>
     </html>
   );
