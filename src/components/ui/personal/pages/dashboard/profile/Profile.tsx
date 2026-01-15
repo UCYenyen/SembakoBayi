@@ -1,13 +1,13 @@
 'use client'
 import React, { useState } from 'react'
-import { revalidatePath } from 'next/cache'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/shadcn-ui/card'
 import { Button } from '@/components/ui/shadcn-ui/button'
 import { Input } from '@/components/ui/shadcn-ui/input'
 import { Label } from '@/components/ui/shadcn-ui/label'
 import { Separator } from '@/components/ui/shadcn-ui/separator'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/shadcn-ui/avatar'
-import { Badge } from '@/components/ui/shadcn-ui/badge' // Pastikan install component badge
+import { Badge } from '@/components/ui/shadcn-ui/badge'
 import {
     Select,
     SelectContent,
@@ -22,12 +22,10 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/shadcn-ui/dialog"
 import {
     Camera,
     Plus,
-    MapPin,
     Pencil,
     CheckCircle2,
     AlertCircle,
@@ -39,6 +37,7 @@ import { toast } from 'sonner'
 
 export default function Profile() {
     const { data: session } = authClient.useSession();
+    const router = useRouter();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -86,7 +85,7 @@ export default function Profile() {
             await new Promise(r => setTimeout(r, 1000));
             setIsOtpDialogOpen(false);
             toast.success("Nomor telepon berhasil diverifikasi!");
-            revalidatePath('/personal/dashboard/profile');
+            router.refresh();
         } catch (error) {
             toast.error("Gagal memverifikasi kode OTP");
         } finally {
@@ -103,7 +102,6 @@ export default function Profile() {
 
             <Card className='w-full max-w-3xl shadow-lg'>
 
-                {/* Header */}
                 <CardHeader className='flex flex-row items-start gap-6 pb-6'>
                     <div className='relative group'>
                         <Avatar className='w-28 h-28 border-4 border-white shadow-sm cursor-pointer group-hover:opacity-90 transition-opacity'>
@@ -139,7 +137,6 @@ export default function Profile() {
                             </p>
                         </div>
 
-                        {/* INPUT NAMA */}
                         <div className='space-y-2'>
                             <Label htmlFor="name">Nama</Label>
                             <div className="relative">
@@ -148,16 +145,14 @@ export default function Profile() {
                                     placeholder="Contoh: Budi"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="pr-10" // Padding kanan supaya teks tidak menabrak ikon
+                                    className="pr-10" 
                                 />
                                 <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none opacity-50" />
                             </div>
                         </div>
 
-                        {/* GRID EMAIL & TELEPON */}
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 
-                            {/* INPUT EMAIL */}
                             <div className='space-y-2'>
                                 <Label htmlFor="email">Email</Label>
                                 <div className="relative">
@@ -173,12 +168,10 @@ export default function Profile() {
                                 </div>
                             </div>
 
-                            {/* --- LOGIKA TELEPON & VERIFIKASI --- */}
                             <div className='space-y-2'>
                                 <div className="flex justify-between items-center">
                                     <Label htmlFor="phoneNumber">Nomor Telepon</Label>
 
-                                    {/* Indikator Status */}
                                     {session.user.phoneNumberVerified ? (
                                         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 gap-1">
                                             <CheckCircle2 className="w-3 h-3" /> Terverifikasi
@@ -191,17 +184,15 @@ export default function Profile() {
                                 </div>
 
                                 <div className="relative">
-                                    {/* Prefix +62 */}
                                     <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 border-r pr-3">
                                         <span className="text-lg">🇮🇩</span>
                                         <span className="text-sm font-medium text-muted-foreground">+62</span>
                                     </div>
 
-                                    {/* Input Telepon */}
                                     <Input
                                         id="phoneNumber"
                                         type="tel"
-                                        className="pl-24 pr-10" // Padding Kiri untuk +62, Kanan untuk Pensil
+                                        className="pl-24 pr-10"
                                         placeholder="812-3456-7890"
                                         value={formData.phoneNumber}
                                         onChange={handleChange}
@@ -209,7 +200,6 @@ export default function Profile() {
                                     <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none opacity-50" />
                                 </div>
 
-                                {/* Tombol Action Verifikasi */}
                                 {!session.user.phoneNumberVerified && (
                                     <div className="pt-1">
                                         <p className="text-[0.8rem] text-muted-foreground mb-2">
@@ -231,8 +221,6 @@ export default function Profile() {
                             </div>
                         </div>
 
-
-                        {/* ALAMAT (Sama seperti sebelumnya) */}
                         <div className='space-y-2'>
                             <Label>Alamat Utama</Label>
                             <div className="flex gap-3">
@@ -246,7 +234,6 @@ export default function Profile() {
                                         <SelectItem value="parents">Rumah Orang Tua - Jl. Melati, Malang</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {/* ... (Bagian Dialog Tambah Alamat sama seperti sebelumnya) ... */}
                                 <Button variant="secondary" className="whitespace-nowrap gap-2">
                                     <Plus className="w-4 h-4" /> Baru
                                 </Button>
