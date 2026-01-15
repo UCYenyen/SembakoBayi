@@ -13,6 +13,8 @@ services:
       - WHATSAPP_DEVICE_ID=${WHATSAPP_DEVICE_ID}
       - WHATSAPP_AUTH_USER=${WHATSAPP_AUTH_USER}
       - WHATSAPP_AUTH_PASS=${WHATSAPP_AUTH_PASS}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - BETTER_AUTH_URL=${BETTER_AUTH_URL}
     networks:
       - global_proxy
       - sb_internal
