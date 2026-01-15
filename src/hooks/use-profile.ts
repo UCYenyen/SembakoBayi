@@ -3,12 +3,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { authClient } from '@/lib/utils/auth-client'
 import { profileSchema, type ProfileValues } from '@/validations/profileValidation.md'
-
-interface ProfileData {
-    name: string;
-    email: string;
-    phoneNumber: string;
-}
+import { UserProfile as ProfileData } from '@/types/user.md'
 
 export function useProfile(initialData?: Partial<ProfileData>) {
     const router = useRouter();
