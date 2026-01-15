@@ -1,10 +1,10 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { revalidatePath } from 'next/cache'
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/shadcn-ui/card'
 import { Button } from '@/components/ui/shadcn-ui/button'
 import { Input } from '@/components/ui/shadcn-ui/input'
 import { Label } from '@/components/ui/shadcn-ui/label'
-import { Textarea } from '@/components/ui/shadcn-ui/textarea'
 import { Separator } from '@/components/ui/shadcn-ui/separator'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/shadcn-ui/avatar'
 import { Badge } from '@/components/ui/shadcn-ui/badge' // Pastikan install component badge
@@ -46,21 +46,9 @@ export default function Profile() {
         phoneNumber: '',
     });
 
-    const [isPhoneVerified, setIsPhoneVerified] = useState(false);
     const [isOtpDialogOpen, setIsOtpDialogOpen] = useState(false);
     const [otpCode, setOtpCode] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        if (session?.user) {
-            setFormData({
-                name: session.user.name || '',
-                email: session.user.email || '',
-                phoneNumber: session.user.phoneNumber || '',
-            });
-            setIsPhoneVerified(false);
-        }
-    }, [session]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -96,9 +84,9 @@ export default function Profile() {
             });
 
             await new Promise(r => setTimeout(r, 1000));
-            setIsPhoneVerified(true);
             setIsOtpDialogOpen(false);
             toast.success("Nomor telepon berhasil diverifikasi!");
+            revalidatePath('/personal/dashboard/profile');
         } catch (error) {
             toast.error("Gagal memverifikasi kode OTP");
         } finally {
@@ -191,7 +179,7 @@ export default function Profile() {
                                     <Label htmlFor="phoneNumber">Nomor Telepon</Label>
 
                                     {/* Indikator Status */}
-                                    {isPhoneVerified ? (
+                                    {session.user.phoneNumberVerified ? (
                                         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 gap-1">
                                             <CheckCircle2 className="w-3 h-3" /> Terverifikasi
                                         </Badge>
@@ -222,7 +210,7 @@ export default function Profile() {
                                 </div>
 
                                 {/* Tombol Action Verifikasi */}
-                                {!isPhoneVerified && (
+                                {!session.user.phoneNumberVerified && (
                                     <div className="pt-1">
                                         <p className="text-[0.8rem] text-muted-foreground mb-2">
                                             Nomor Anda belum terverifikasi. Fitur keamanan tertentu mungkin terbatas.
@@ -241,7 +229,6 @@ export default function Profile() {
                                     </div>
                                 )}
                             </div>
-                            {/* ----------------------------------- */}
                         </div>
 
 

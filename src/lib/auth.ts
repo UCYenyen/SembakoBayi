@@ -61,14 +61,27 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    admin({ 
-      adminRole: "ADMIN",  
+    admin({
+      adminRole: "ADMIN",
       defaultRole: "GUEST",
     }),
     phoneNumber({
       otpLength: 6,
       sendOTP: async ({ phoneNumber, code }) => {
-        const message = `*${code}* adalah kode verifikasi Anda.\n\nDemi keamanan, jangan berikan kode ini kepada siapapun.`;
+        const message = `
+      *🔒 Kode Verifikasi Sembako Bayi*
+
+      Kode OTP Anda:
+      ====================
+      *${code}*
+      ====================
+
+      Salin kode di atas untuk verifikasi akun Anda.
+
+      Jangan bagikan kode ini kepada siapapun demi keamanan akun Anda.
+
+      Terima kasih telah menggunakan Sembako Bayi!
+        `;
         const result = await sendWhatsAppMessage(phoneNumber, message);
 
         if (!result.success) {
