@@ -8,6 +8,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - GMAIL_USER=${GMAIL_USER}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
       - DATABASE_URL=${DATABASE_URL}
       - WHATSAPP_API_URL=${WHATSAPP_API_URL}
       - WHATSAPP_DEVICE_ID=${WHATSAPP_DEVICE_ID}
