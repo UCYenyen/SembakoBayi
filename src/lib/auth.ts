@@ -3,6 +3,7 @@ import { phoneNumber } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 import nodemailer from "nodemailer";
+import { sendWhatsAppMessage } from "./whatsapp";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -16,17 +17,17 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-      sendVerificationEmail: async ({ user, url }) => {
-        console.log(
-          "\n==============================",
-          "\n📧 Email Verifikasi Terkirim",
-          "\n------------------------------",
-          `👤 User: ${user.name ?? user.email}`,
-          `✉️  Email: ${user.email}`,
-          `🔗 Link Verifikasi:\n${url}`,
-          "==============================\n"
-        );
-      }
+    sendVerificationEmail: async ({ user, url }) => {
+      console.log(
+        "\n==============================",
+        "\n📧 Email Verifikasi Terkirim",
+        "\n------------------------------",
+        `👤 User: ${user.name ?? user.email}`,
+        `✉️  Email: ${user.email}`,
+        `🔗 Link Verifikasi:\n${url}`,
+        "==============================\n"
+      );
+    },
     // sendVerificationEmail: async ({ user, url }) => {
     //   const transporter = nodemailer.createTransport({
     //     service: "gmail",
@@ -60,9 +61,14 @@ export const auth = betterAuth({
   },
   plugins: [
     phoneNumber({
-      async sendOTP({ phoneNumber, code }, ctx) {
-        console.log(`Kirim OTP ${code} ke ${phoneNumber}`);
-        // await twilio.messages.create({ ... })
+      otpLength: 6,
+      sendOTP: async ({ phoneNumber, code }) => {
+        const message = `*${code}* adalah kode verifikasi Anda.\n\nDemi keamanan, jangan berikan kode ini kepada siapapun.`;
+        const result = await sendWhatsAppMessage(phoneNumber, message);
+
+        if (!result.success) {
+          throw new Error("Gagal mengirim kode OTP via WhatsApp.");
+        }
       },
     }),
   ],

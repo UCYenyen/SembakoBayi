@@ -1,0 +1,44 @@
+services:
+  ucyenyen_portfolio:
+    container_name: sb_app_new
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=${DATABASE_URL}
+      - WHATSAPP_API_URL=${WHATSAPP_API_URL}
+      - WHATSAPP_DEVICE_ID=${WHATSAPP_DEVICE_ID}
+      - WHATSAPP_AUTH_USER=${WHATSAPP_AUTH_USER}
+      - WHATSAPP_AUTH_PASS=${WHATSAPP_AUTH_PASS}
+    networks:
+      - global_proxy
+      - sb_internal
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: sb_db_new
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT_EXTERNAL}:5432"
+    networks:
+      - sb_internal
+
+networks:
+  global_proxy:
+    external: true
+  sb_internal:
+    driver: bridge
+
+volumes:
+  pg_data:
