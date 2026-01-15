@@ -4,6 +4,28 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/utils/prisma";
 import nodemailer from "nodemailer";
 import { sendWhatsAppMessage } from "./whatsapp";
+import { createAuthMiddleware, APIError } from "better-auth/api"
+
+const ERROR_TRANSLATIONS: Record<string, string> = {
+    "User already exists": "Email ini sudah terdaftar",
+    "Invalid email or password": "Email atau password salah",
+    "Invalid password": "Password salah",
+    "Password too short": "Password terlalu pendek",
+    "Passwords do not match": "Password tidak cocok",
+    "Failed to create user": "Gagal membuat pengguna baru",
+    "Invalid token": "Token tidak valid atau sudah kadaluarsa",
+    "User not found": "Pengguna tidak ditemukan",
+    "Please verify your email address": "Mohon verifikasi email Anda terlebih dahulu",
+    "Too many requests": "Terlalu banyak percobaan, coba lagi nanti",
+    "Unauthorized": "Anda tidak memiliki akses",
+    "Session expired": "Sesi Anda telah berakhir, silakan login kembali",
+    "Failed to send verification email": "Gagal mengirim email verifikasi",
+    "Invalid verification code": "Kode verifikasi salah",
+    "Verification code expired": "Kode verifikasi sudah kadaluarsa",
+    "Email not verified": "Email belum diverifikasi",
+    "Account suspended": "Akun Anda ditangguhkan",
+    "Something went wrong": "Terjadi kesalahan pada server",
+};
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -96,4 +118,24 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  hooks: {
+        after: createAuthMiddleware(async (ctx) => {
+            const returned = ctx.context.returned;
+
+            if (returned instanceof APIError) {
+                const originalMessage = returned.message;
+                const errorCode = returned.body?.code;
+
+                const translatedMessage = 
+                    ERROR_TRANSLATIONS[originalMessage] || 
+                    ERROR_TRANSLATIONS[errorCode || ""] || 
+                    originalMessage;
+
+                throw new APIError(returned.status, {
+                    message: translatedMessage,
+                    code: returned.body?.code
+                });
+            }
+        }),
+    },
 });
