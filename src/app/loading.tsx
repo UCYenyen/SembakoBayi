@@ -1,11 +1,9 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { FaSpinner } from 'react-icons/fa6'
-import { Card, CardContent, CardDescription, CardFooter } from '@/components/ui/shadcn-ui/card'
+import { Card, CardContent, CardDescription } from '@/components/ui/shadcn-ui/card'
 import { CardHeader, CardTitle } from '@/components/ui/shadcn-ui/card'
 import { Separator } from '@/components/ui/shadcn-ui/separator'
-import Link from 'next/link'
-import { TriangleAlert } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: "Memuat...",
