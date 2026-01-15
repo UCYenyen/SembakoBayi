@@ -61,7 +61,7 @@ export default function Profile() {
     }
 
     return (
-        <section className='flex my-[20%] md:my-[5%] flex-col min-h-screen w-full px-4 items-center justify-start'>
+        <section className='flex mt-[20%] md:mt-[7.5%] flex-col min-h-screen w-full px-4 items-center justify-start'>
             <Card className='w-full max-w-3xl shadow-lg'>
                 
                 <CardHeader className='flex flex-row items-start gap-6 pb-6'>

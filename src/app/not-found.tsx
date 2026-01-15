@@ -2,6 +2,9 @@ import React from 'react'
 import { Metadata } from 'next'
 import { TriangleAlert } from 'lucide-react'
 import { Card } from '@/components/ui/shadcn-ui/card'
+import { CardTitle, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/shadcn-ui/card'
+import { Separator } from '@/components/ui/shadcn-ui/separator'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: "Tidak Ditemukan",
@@ -10,16 +13,28 @@ export const metadata: Metadata = {
 
 export default function notFound() {
   return (
-    <main className="overflow-hidden min-h-screen justify-center items-center flex flex-col gap-4">
-      <Card className="w-full sm:max-w-112.5 shadow-lg flex justify-center items-center flex-col gap-6 p-8">
-        <div className='p-4 flex justify-center items-center bg-gray-200 rounded-full'>
-          <TriangleAlert className="w-12 h-12 text-black" />
-        </div>
-        <div className='flex flex-col gap-2'>
-          <h1 className="text-4xl font-bold text-center">Tidak Ditemukan</h1>
-          <p className="text-center mt-4">Maaf, halaman yang Anda cari tidak tersedia.</p>
-        </div>
+    <section className='min-h-screen w-screen overflow-hidden flex justify-center items-center'>
+      <Card className='w-112.5 max-w-[80%] min-h-72 flex flex-col justify-between shadow-lg'>
+        <CardHeader>
+          <div className='flex justify-center items-center gap-4'>
+            <CardTitle className='text-2xl'>Halaman Tidak Ditemukan</CardTitle>
+          </div>
+        </CardHeader>
+        <Separator />
+        <CardContent>
+          <CardDescription className='text-center flex flex-col gap-4 items-center justify-center'>
+            <div className='p-4 flex justify-center items-center bg-gray-200 rounded-full'>
+              <TriangleAlert className="w-12 h-12 text-black" />
+            </div>
+            <p className='my-4 text-center w-[90%]'>Maaf, halaman yang Anda cari tidak ditemukan. Silakan periksa kembali URL atau kembali ke beranda.</p>
+          </CardDescription>
+        </CardContent>
+        <CardFooter className='flex justify-center items-center'>
+          <Link href='/' className='bg-primary text-accent px-4 py-2 rounded hover:bg-primary/90 transition'>
+            Kembali ke Beranda
+          </Link>
+        </CardFooter>
       </Card>
-    </main>
+    </section>
   )
 }

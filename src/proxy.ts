@@ -17,7 +17,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isAuthRoute && sessionCookie) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard/user", request.url));
   }
 
   return NextResponse.next();

@@ -269,13 +269,13 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                   <PopoverContent align="end" className="w-64 p-4">
                     <div className="flex flex-col gap-2">
                       {user && (
-                        <div className="flex flex-col items-end justify-center gap-3 p-2">
+                        <div className="flex flex-col items-start justify-center gap-3 p-2">
                           <Avatar className="h-10 w-10">
                             {/* Better Auth menggunakan user.image */}
                             <AvatarImage src={user.image || undefined} alt="@user" />
                             <AvatarFallback>{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
-                          <div className="flex flex-col items-end overflow-hidden">
+                          <div className="flex flex-col items-start overflow-hidden">
                              {/* Better Auth menggunakan user.name */}
                             <span className="font-medium">{user.name}</span>
                             <span className="text-sm text-muted-foreground overflow-x-auto">{user.email}</span>
@@ -289,7 +289,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                       <Button
                         variant="ghost"
                         asChild
-                        className="w-full justify-end text-right font-medium h-10 px-3"
+                        className="w-full justify-start text-left font-medium h-10 px-3"
                       >
                         <Link href="/dashboard/profile"
                           onClick={() => setIsPopoverOpen(false)}
@@ -300,7 +300,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                       <Button
                         variant="ghost"
                         asChild
-                        className="w-full justify-end text-right font-medium h-10 px-3"
+                        className="w-full justify-start text-left font-medium h-10 px-3"
                       >
                         <Link href="/dashboard" onClick={() => setIsPopoverOpen(false)}>
                           Dasbor
@@ -312,7 +312,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                           key={index}
                           variant="ghost"
                           asChild
-                          className="w-full justify-end text-right font-medium h-10 px-3"
+                          className="w-full justify-start text-left font-medium h-10 px-3"
                         >
                           <Link
                             href={link.href || '#'}
@@ -337,7 +337,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                               <Button
                                 variant="ghost"
                                 asChild
-                                className="w-full justify-end text-right h-10 px-3"
+                                className="w-full justify-start text-left h-10 px-3"
                               >
                                 <Link
                                   href={signInHref || '#'}
@@ -355,7 +355,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                               <Button
                                 variant="ghost"
                                 asChild
-                                className="w-full justify-end text-right h-10 px-3"
+                                className="w-full justify-start text-left h-10 px-3"
                               >
                                 <Link
                                   href={cartHref || '#'}
@@ -364,7 +364,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                                     if (onCartClick) onCartClick();
                                   }}
                                 >
-                                  <div className="flex w-full items-center justify-end gap-2">
+                                  <div className="flex w-full items-center justify-start gap-2">
                                     <span>{cartText}</span>
                                     {cartCount !== undefined && cartCount > 0 && (
                                       <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1 text-xs font-medium text-primary">
@@ -376,7 +376,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                               </Button>
                               <Button
                                 variant="ghost"
-                                className="w-full justify-end text-right h-10 px-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                className="w-full justify-start text-left h-10 px-3 text-destructive hover:text-destructive hover:bg-destructive/10"
                                 onClick={() => {
                                   setIsPopoverOpen(false);
                                   handleSignOut();
@@ -452,7 +452,7 @@ export const Navbar04 = React.forwardRef<HTMLElement, Navbar04Props>(
                             <AvatarFallback>{user.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuContent align="start" className="w-56">
                            {/* Update data access */}
                           <DropdownMenuLabel className='overflow-x-auto'>{user.name}</DropdownMenuLabel>
                           <DropdownMenuLabel className='text-sm text-muted-foreground overflow-x-auto'>{user.email}</DropdownMenuLabel>
