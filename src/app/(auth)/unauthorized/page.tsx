@@ -6,7 +6,7 @@ import { TriangleAlert } from 'lucide-react'
 import Link from 'next/link'
 export default function page() {
     return (
-        <section className='min-h-screen w-screen overflow-hidden flex justify-center items-center'>
+        <section className='py-32 pt-48 w-screen overflow-hidden flex justify-center items-center'>
             <Card className='w-112.5 max-w-[80%] min-h-72 flex flex-col justify-between shadow-lg'>
                 <CardHeader>
                     <div className='flex justify-center items-center gap-4'>
