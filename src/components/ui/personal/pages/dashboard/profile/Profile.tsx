@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/shadcn-ui/card'
 import { Button } from '@/components/ui/shadcn-ui/button'
 import { Input } from '@/components/ui/shadcn-ui/input'
@@ -31,7 +30,7 @@ import {
     Loader2
 } from 'lucide-react'
 
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '@/lib/utils/auth-client'
 import { useProfile } from '@/hooks/use-profile'
 
 export default function Profile() {

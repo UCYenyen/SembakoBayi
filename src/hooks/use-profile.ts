@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '@/lib/utils/auth-client'
 
 interface ProfileData {
     name: string;

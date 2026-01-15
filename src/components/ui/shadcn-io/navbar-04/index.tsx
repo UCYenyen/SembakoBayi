@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/shadcn-ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 // Ganti import Supabase/Context lama ke Better Auth
-import { authClient } from '@/lib/auth-client'; 
+import { authClient } from '@/lib/utils/auth-client'; 
 
 // Infer type User dari better-auth
 type User = typeof authClient.$Infer.Session.user;

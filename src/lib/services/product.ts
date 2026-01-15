@@ -1,4 +1,4 @@
-import prisma from "./prisma";
+import prisma from "@/lib/utils/prisma";
 
 export async function getAllFeaturedProducts() {
   return prisma.product.findMany({

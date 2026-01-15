@@ -1,10 +1,9 @@
 import { betterAuth } from "better-auth";
 import { phoneNumber, admin } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import prisma from "./prisma";
+import prisma from "@/lib/utils/prisma";
 import nodemailer from "nodemailer";
-import { Role } from "better-auth/plugins";
-import { sendWhatsAppMessage } from "../utils/whatsapp";
+import { sendWhatsAppMessage } from "./whatsapp";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
