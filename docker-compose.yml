@@ -20,29 +20,9 @@ services:
     networks:
       - global_proxy
       - sb_internal
-    depends_on:
-      - db
-
-  db:
-    image: postgres:15-alpine
-    container_name: sb_db_new
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-    ports:
-      - "${DB_PORT_EXTERNAL}:5432"
-    networks:
-      - sb_internal
 
 networks:
   global_proxy:
     external: true
   sb_internal:
     driver: bridge
-
-volumes:
-  pg_data:
