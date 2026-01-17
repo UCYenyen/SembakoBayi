@@ -1,5 +1,5 @@
 import prisma from "@/lib/utils/prisma";
-import { ProductCardProps } from "@/types/product.md";
+import { Product, ProductCardProps } from "@/types/product.md";
 import { UpdateProductValidation } from "@/validations/productValidation.md";
 
 export async function getAllFeaturedProducts() {
@@ -128,3 +128,33 @@ export async function updateProductService(payload: UpdateProductValidation) {
 
   return updatedProduct;
 }
+
+export async function getAdminProducts(): Promise<Product[]> {
+    const products = await prisma.product.findMany({
+      include: {
+        brand: true,
+        category: true,
+      },
+    });
+  
+    return products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      stock: product.stock,
+      price: Number(product.price),
+      rating: 5,
+      imageSrc: product.imageUrl,
+      isOnSale: product.onSale,
+      discountAmount: Number(product.promoPrice || 0),
+      category: {
+        id: product.category.id,
+        name: product.category.name,
+        parent_id: product.category.parentId || "",
+      },
+      brand: {
+        id: product.brand.id,
+        name: product.brand.name,
+      },
+    }));
+  }
