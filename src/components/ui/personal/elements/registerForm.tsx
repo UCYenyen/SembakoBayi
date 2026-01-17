@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
 import { registerSchema, type RegisterValues } from "@/validations/authValidation.md";
-import { authClient } from "@/lib/utils/auth-client";
+import { authClient } from "@/lib/utils/auth/auth-client";
 
 import { Button } from "@/components/ui/shadcn-ui/button";
 import {

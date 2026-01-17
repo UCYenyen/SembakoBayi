@@ -30,7 +30,7 @@ import {
     Loader2
 } from 'lucide-react'
 
-import { authClient } from '@/lib/utils/auth-client'
+import { authClient } from '@/lib/utils/auth/auth-client'
 import { useProfile } from '@/hooks/use-profile'
 
 export default function Profile() {

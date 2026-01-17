@@ -3,7 +3,7 @@ import { phoneNumber, admin } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/utils/prisma";
 import nodemailer from "nodemailer";
-import { sendWhatsAppMessage } from "./whatsapp";
+import { sendWhatsAppMessage } from "../whatsapp";
 import { createAuthMiddleware, APIError } from "better-auth/api"
 
 const ERROR_TRANSLATIONS: Record<string, string> = {

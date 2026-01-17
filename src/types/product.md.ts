@@ -19,4 +19,12 @@ export interface ProductCardProps{
 
 export interface Product extends ProductCardProps {
     description: string;
+    stock: number;
+}
+
+export interface ProductUpdateEvent {
+    id: string;
+    isOnSale: boolean;
+    discountAmount: number;
+    price: number;
 }

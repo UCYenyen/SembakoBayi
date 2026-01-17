@@ -1,5 +1,6 @@
 import prisma from "@/lib/utils/prisma";
 import { ProductCardProps } from "@/types/product.md";
+import { UpdateProductValidation } from "@/validations/productValidation.md";
 
 export async function getAllFeaturedProducts() {
   return prisma.product.findMany({
@@ -99,4 +100,31 @@ export async function getProductDetails(
       category: true,
     },
   });
+}
+
+
+export async function updateProductService(payload: UpdateProductValidation) {
+  const { id, ...dataToUpdate } = payload;
+
+  // Kita construct object data agar mapping sesuai dengan schema Prisma
+  // Gunakan undefined check agar field yang tidak dikirim tidak meng-overwrite database dengan null/undefined
+  const updateData: Parameters<typeof prisma.product.update>[0]['data'] = {};
+
+  if (dataToUpdate.name !== undefined) updateData.name = dataToUpdate.name;
+  if (dataToUpdate.price !== undefined) updateData.price = dataToUpdate.price;
+  
+  // Mapping field Zod/UI -> Prisma DB
+  if (dataToUpdate.isOnSale !== undefined) updateData.onSale = dataToUpdate.isOnSale;
+  if (dataToUpdate.discountAmount !== undefined) updateData.promoPrice = dataToUpdate.discountAmount;
+
+  const updatedProduct = await prisma.product.update({
+    where: { id },
+    data: updateData,
+    include: {
+      brand: true,
+      category: true,
+    }
+  });
+
+  return updatedProduct;
 }
