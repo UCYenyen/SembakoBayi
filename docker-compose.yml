@@ -1,23 +1,13 @@
 services:
-  migrate:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-      target: migrator
-    container_name: sb-migration
-    env_file:
-      - .env
-    networks:
-      - global_proxy
-      - sb_internal
-
   migrate_reset:
     build:
       context: ./
       dockerfile: Dockerfile
       target: migrator
-    container_name: eternity-migrate-reset
-    command: pnpm prisma migrate reset --force
+    # Service khusus untuk reset database (Wipe data + Migrate Schema)
+    # Jalankan manual: docker compose run --rm migrate_reset
+    container_name: sb_migrate_reset
+    command: pnpm prisma migrate reset --force --skip-seed
     env_file:
       - .env
     networks:
@@ -26,12 +16,14 @@ services:
     profiles:
       - manual
 
-  seeder:
+  seed:
     build:
       context: ./
       dockerfile: Dockerfile
       target: migrator
-    container_name: sb-seeder
+    # Service khusus untuk seeding database
+    # Jalankan manual: docker compose run --rm seed
+    container_name: sb_seed
     command: pnpm prisma db seed
     env_file:
       - .env
@@ -40,11 +32,13 @@ services:
       - sb_internal
     profiles:
       - manual
+
   sb_app_new:
     container_name: sb_app_new
     build:
       context: .
       dockerfile: Dockerfile
+      target: runner
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -57,9 +51,6 @@ services:
       - WHATSAPP_AUTH_PASS=${WHATSAPP_AUTH_PASS}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - BETTER_AUTH_URL=${BETTER_AUTH_URL}
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
     expose:
       - "3000"
     networks:
