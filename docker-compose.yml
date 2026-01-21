@@ -40,6 +40,13 @@ services:
       context: .
       dockerfile: Dockerfile
       target: runner
+      args:
+        NEXT_PUBLIC_PUSHER_KEY: ${NEXT_PUBLIC_PUSHER_KEY}
+        NEXT_PUBLIC_PUSHER_CLUSTER: ${NEXT_PUBLIC_PUSHER_CLUSTER}
+        NEXT_PUBLIC_PUSHER_TLS: ${NEXT_PUBLIC_PUSHER_TLS}
+        NEXT_PUBLIC_PUSHER_HOST: ${NEXT_PUBLIC_PUSHER_HOST}
+        NEXT_PUBLIC_PUSHER_PORT: ${NEXT_PUBLIC_PUSHER_PORT}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
