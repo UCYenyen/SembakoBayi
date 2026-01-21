@@ -37,6 +37,7 @@ export async function getAllProduct(page: number = 1) : Promise<ProductCardProps
   return products.map((product) => ({
     id: product.id,
     name: product.name,
+    slug: product.slug,
     price: Number(product.price),
     rating: 5, 
     imageSrc: product.imageUrl,
@@ -72,6 +73,7 @@ export async function getAllPopularProducts(): Promise<ProductCardProps[]> {
     id: product.id,
     name: product.name,
     price: Number(product.price),
+    slug: product.slug,
     rating: 5, 
     imageSrc: product.imageUrl,
     isOnSale: product.onSale,
@@ -91,15 +93,40 @@ export async function getAllPopularProducts(): Promise<ProductCardProps[]> {
 export async function getProductDetails(
   slug: string
 ){
-  return prisma.product.findUnique({
+  const product = await prisma.product.findUnique({
     where: {
-      slug,
+      slug: slug,
     },
     include: {
       brand: true,
       category: true,
     },
   });
+  if (!product) {
+    throw new Error('Product not found');
+  }
+
+  return {
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    description: product.description,
+    stock: product.stock,
+    price: Number(product.price),
+    rating: 5,
+    imageSrc: product.imageUrl,
+    isOnSale: product.onSale,
+    discountAmount: Number(product.promoPrice || 0),
+    category: {
+      id: product.category.id,
+      name: product.category.name,
+      parent_id: product.category.parentId || "",
+    },
+    brand: {
+      id: product.brand.id,
+      name: product.brand.name,
+    },
+  };
 }
 
 
@@ -140,6 +167,7 @@ export async function getAdminProducts(): Promise<Product[]> {
     return products.map((product) => ({
       id: product.id,
       name: product.name,
+      slug: product.slug,
       description: product.description,
       stock: product.stock,
       price: Number(product.price),

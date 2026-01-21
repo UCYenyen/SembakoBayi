@@ -39,48 +39,48 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    // sendVerificationEmail: async ({ user, url }) => {
-    //   console.log(
-    //     "\n==============================",
-    //     "\n📧 Email Verifikasi Terkirim",
-    //     "\n------------------------------",
-    //     `👤 User: ${user.name ?? user.email}`,
-    //     `✉️  Email: ${user.email}`,
-    //     `🔗 Link Verifikasi:\n${url}`,
-    //     "==============================\n"
-    //   );
-    // },
     sendVerificationEmail: async ({ user, url }) => {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.GMAIL_USER,
-          pass: process.env.GMAIL_APP_PASSWORD,
-        },
-      });
-
-      try {
-        await transporter.sendMail({
-          from: '"SEMBAKO BAYI" <no-reply@sembakobayi.com>',
-          to: user.email,
-          subject: "Verifikasi Akun Anda",
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px;">
-              <h2>Selamat Datang, ${user.name}!</h2>
-              <p>Terima kasih telah mendaftar di Sembako Bayi. Silakan klik tombol di bawah ini untuk memverifikasi email Anda:</p>
-              <a href="${url}" style="background-color: #3F3142; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                Verifikasi Email
-              </a>
-              <p>Atau copy link ini: <br/> ${url}</p>
-              <p>Kami menunggu kehadiran Anda di Sembako Bayi!</p>
-            </div>
-          `,
-        });
-        console.log("Email verifikasi terkirim ke:", user.email);
-      } catch (error) {
-        console.error("Gagal mengirim email:", error);
-      }
+      console.log(
+        "\n==============================",
+        "\n📧 Email Verifikasi Terkirim",
+        "\n------------------------------",
+        `👤 User: ${user.name ?? user.email}`,
+        `✉️  Email: ${user.email}`,
+        `🔗 Link Verifikasi:\n${url}`,
+        "==============================\n"
+      );
     },
+    // sendVerificationEmail: async ({ user, url }) => {
+    //   const transporter = nodemailer.createTransport({
+    //     service: "gmail",
+    //     auth: {
+    //       user: process.env.GMAIL_USER,
+    //       pass: process.env.GMAIL_APP_PASSWORD,
+    //     },
+    //   });
+
+    //   try {
+    //     await transporter.sendMail({
+    //       from: '"SEMBAKO BAYI" <no-reply@sembakobayi.com>',
+    //       to: user.email,
+    //       subject: "Verifikasi Akun Anda",
+    //       html: `
+    //         <div style="font-family: Arial, sans-serif; padding: 20px;">
+    //           <h2>Selamat Datang, ${user.name}!</h2>
+    //           <p>Terima kasih telah mendaftar di Sembako Bayi. Silakan klik tombol di bawah ini untuk memverifikasi email Anda:</p>
+    //           <a href="${url}" style="background-color: #3F3142; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+    //             Verifikasi Email
+    //           </a>
+    //           <p>Atau copy link ini: <br/> ${url}</p>
+    //           <p>Kami menunggu kehadiran Anda di Sembako Bayi!</p>
+    //         </div>
+    //       `,
+    //     });
+    //     console.log("Email verifikasi terkirim ke:", user.email);
+    //   } catch (error) {
+    //     console.error("Gagal mengirim email:", error);
+    //   }
+    // },
   },
   plugins: [
     admin({

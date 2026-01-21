@@ -1,6 +1,7 @@
 export interface ProductCardProps{
     id: string;
     name: string;
+    slug: string;
     price: number;
     rating: number;
     imageSrc: string;

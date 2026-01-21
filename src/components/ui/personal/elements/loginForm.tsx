@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 import { loginSchema, type LoginValues } from "@/validations/authValidation.md"; 
 import { authClient } from "@/lib/utils/auth/auth-client";
@@ -31,6 +32,7 @@ import { InputGroup } from "@/components/ui/shadcn-ui/input-group";
 export default function LoginForm() {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -117,14 +119,35 @@ export default function LoginForm() {
                 Lupa password?
               </Link>
             </div>
-            <InputGroup>
+            
+            {/* 3. Modifikasi Input Password */}
+            <InputGroup className="relative">
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"} // Toggle tipe input
                 placeholder="••••••••"
                 disabled={isPending}
+                className="pr-10" // Tambah padding kanan agar teks tidak tertutup icon
                 {...form.register("password")}
               />
+              <Button
+                type="button" // Penting: type button agar tidak submit form
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setShowPassword((prev) => !prev)}
+                disabled={isPending}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                ) : (
+                  <Eye className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                )}
+                <span className="sr-only">
+                  {showPassword ? "Hide password" : "Show password"}
+                </span>
+              </Button>
             </InputGroup>
+            
             <FieldError>{form.formState.errors.password?.message}</FieldError>
           </Field>
 

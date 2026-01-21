@@ -13,6 +13,7 @@ import { PlusIcon } from 'lucide-react'
 import { FaStar } from 'react-icons/fa6'
 import { ProductCardProps } from '@/types/product.md'
 import { useRealtimeProduct } from '@/hooks/products/use-realtime-product';
+import Link from 'next/link';
 
 export default function ProductsCard(initialData: ProductCardProps) {
     const product = useRealtimeProduct(initialData);
@@ -62,7 +63,7 @@ export default function ProductsCard(initialData: ProductCardProps) {
                 <Button className="w-full flex gap-2 justify-center items-center">
                     <PlusIcon className="h-4 w-4" /> Keranjang
                 </Button>
-                <Button variant="outline" className="w-full">Lihat Detail</Button>
+                <Button variant="outline" asChild className="w-full"><Link href={`/shop/product/${product.slug}`}>Lihat Detail</Link></Button>
             </CardFooter>
         </CardProduct>
     )
