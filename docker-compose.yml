@@ -1,4 +1,45 @@
 services:
+  migrate:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: migrator
+    container_name: sb-migration
+    env_file:
+      - .env
+    networks:
+      - global_proxy
+      - sb_internal
+
+  migrate_reset:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: migrator
+    container_name: eternity-migrate-reset
+    command: pnpm prisma migrate reset --force
+    env_file:
+      - .env
+    networks:
+      - global_proxy
+      - sb_internal
+    profiles:
+      - manual
+
+  seeder:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: migrator
+    container_name: sb-seeder
+    command: pnpm prisma db seed
+    env_file:
+      - .env
+    networks:
+      - global_proxy
+      - sb_internal
+    profiles:
+      - manual
   sb_app_new:
     container_name: sb_app_new
     build:
@@ -7,7 +48,6 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - PORT=3000
       - GMAIL_USER=${GMAIL_USER}
       - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
       - DATABASE_URL=${DATABASE_URL}
@@ -17,6 +57,11 @@ services:
       - WHATSAPP_AUTH_PASS=${WHATSAPP_AUTH_PASS}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - BETTER_AUTH_URL=${BETTER_AUTH_URL}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    expose:
+      - "3000"
     networks:
       - global_proxy
       - sb_internal
