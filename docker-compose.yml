@@ -7,7 +7,7 @@ services:
     # Service khusus untuk reset database (Wipe data + Migrate Schema)
     # Jalankan manual: docker compose run --rm migrate_reset
     container_name: sb_migrate_reset
-    command: pnpm prisma migrate reset --force --skip-seed
+    command: pnpm prisma migrate reset --force
     env_file:
       - .env
     networks:
@@ -24,7 +24,8 @@ services:
     # Service khusus untuk seeding database
     # Jalankan manual: docker compose run --rm seed
     container_name: sb_seed
-    command: pnpm prisma db seed
+    # Generate client dulu untuk memastikan schema terbaru ada, baru jalankan seed script
+    command: /bin/sh -c "pnpm prisma generate && pnpm tsx prisma/seed.ts"
     env_file:
       - .env
     networks:
