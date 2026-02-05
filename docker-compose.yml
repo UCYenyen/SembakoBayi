@@ -39,7 +39,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'     # Maksimal hanya boleh pakai 50% CPU
+          cpus: '0.60'     # Maksimal hanya boleh pakai 50% CPU
           memory: 512M     # Sesuaikan dengan kebutuhan Next.js kamu
     build:
       context: .
