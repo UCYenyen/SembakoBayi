@@ -27,21 +27,53 @@ const MapPicker = dynamic(() => import("./MapPicker"), {
   ),
 });
 
+import { AddressValues } from "@/validations/addressValidation.md";
+import { Address as PrismaAddress } from "@prisma/client";
+
 interface AddressPopupProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: PrismaAddress | null;
 }
 
-export function AddressPopup({ isOpen, onOpenChange }: AddressPopupProps) {
-  const { form, isLoading, handleMapClick, onSubmit } = useAddress(() =>
-    onOpenChange(false),
+export function AddressPopup({
+  isOpen,
+  onOpenChange,
+  initialData,
+}: AddressPopupProps) {
+  // Map Prisma Address to Form Values
+  const defaultValues: (Partial<AddressValues> & { id?: string }) | undefined =
+    initialData
+      ? {
+          id: initialData.id,
+          label: initialData.label,
+          province: initialData.province,
+          provinceId: initialData.provinceId,
+          city: initialData.city,
+          cityId: initialData.cityId,
+          district: initialData.district || "",
+          postalCode: initialData.postalCode,
+          fullAddress: initialData.fullAddress,
+          noteToDriver: initialData.noteToDriver || "",
+          isDefault: initialData.isDefault,
+          latitude: initialData.latitude || undefined,
+          longitude: initialData.longitude || undefined,
+        }
+      : undefined;
+
+  const { form, isLoading, handleMapClick, onSubmit } = useAddress(
+    defaultValues,
+    () => onOpenChange(false),
   );
+  const isEditing = !!initialData;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Tambah Alamat Baru</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Ubah Alamat" : "Tambah Alamat Baru"}
+          </DialogTitle>
           <DialogDescription>
             Tandai lokasi pada peta untuk mengisi otomatis, atau isi manual.
           </DialogDescription>

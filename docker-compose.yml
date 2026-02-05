@@ -36,6 +36,11 @@ services:
 
   sb_app_new:
     container_name: sb_app_new
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'     # Maksimal hanya boleh pakai 50% CPU
+          memory: 512M     # Sesuaikan dengan kebutuhan Next.js kamu
     build:
       context: .
       dockerfile: Dockerfile
