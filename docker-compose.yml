@@ -39,8 +39,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.60'     # Maksimal hanya boleh pakai 50% CPU
-          memory: 512M     # Sesuaikan dengan kebutuhan Next.js kamu
+          cpus: '0.70'  # Jangan biarkan build pakai lebih dari 70% CPU
+          memory: 2G    # Berikan batas RAM agar OS tidak hang
     build:
       context: .
       dockerfile: Dockerfile
