@@ -8,27 +8,30 @@ export async function getAllFeaturedProducts() {
       brand: true,
       category: true,
     },
-    where:{
-        NOT:{
-            isHidden:true
-        }
-    }
+    where: {
+      NOT: {
+        isHidden: true,
+      },
+    },
   });
 }
 
-export async function getAllProduct(page: number = 1) : Promise<ProductCardProps[]> {
+export async function getAllProduct(
+  page: number = 1,
+): Promise<ProductCardProps[]> {
   const pageSize = 8;
   const skip = (page - 1) * pageSize;
-  
+
   const products = await prisma.product.findMany({
     include: {
       brand: true,
       category: true,
+      productMedia: true,
     },
-    where:{
-        NOT:{
-            isHidden:true
-        }
+    where: {
+      NOT: {
+        isHidden: true,
+      },
     },
     skip,
     take: pageSize,
@@ -39,8 +42,11 @@ export async function getAllProduct(page: number = 1) : Promise<ProductCardProps
     name: product.name,
     slug: product.slug,
     price: Number(product.price),
-    rating: 5, 
-    imageSrc: product.imageUrl,
+    rating: 5,
+    thumbnail:
+      product.productMedia.length > 0
+        ? product.productMedia[0].url
+        : "/images/products/no-image.webp",
     isOnSale: product.onSale,
     discountAmount: Number(product.promoPrice || 0),
     category: {
@@ -60,6 +66,7 @@ export async function getAllPopularProducts(): Promise<ProductCardProps[]> {
     include: {
       brand: true,
       category: true,
+      productMedia: true,
     },
     where: {
       NOT: {
@@ -74,8 +81,11 @@ export async function getAllPopularProducts(): Promise<ProductCardProps[]> {
     name: product.name,
     price: Number(product.price),
     slug: product.slug,
-    rating: 5, 
-    imageSrc: product.imageUrl,
+    rating: 5,
+    thumbnail:
+      product.productMedia.length > 0
+        ? product.productMedia[0].url
+        : "/images/products/no-image.webp",
     isOnSale: product.onSale,
     discountAmount: Number(product.promoPrice || 0),
     category: {
@@ -90,9 +100,7 @@ export async function getAllPopularProducts(): Promise<ProductCardProps[]> {
   }));
 }
 
-export async function getProductDetails(
-  slug: string
-){
+export async function getProductDetails(slug: string): Promise<Product> {
   const product = await prisma.product.findUnique({
     where: {
       slug: slug,
@@ -100,10 +108,11 @@ export async function getProductDetails(
     include: {
       brand: true,
       category: true,
+      productMedia: true,
     },
   });
   if (!product) {
-    throw new Error('Product not found');
+    throw new Error("Product not found");
   }
 
   return {
@@ -114,7 +123,11 @@ export async function getProductDetails(
     stock: product.stock,
     price: Number(product.price),
     rating: 5,
-    imageSrc: product.imageUrl,
+    thumbnail:
+      product.productMedia.length > 0
+        ? product.productMedia[0].url
+        : "/images/products/no-image.webp",
+    medias: product.productMedia.map((media) => media.url),
     isOnSale: product.onSale,
     discountAmount: Number(product.promoPrice || 0),
     category: {
@@ -129,20 +142,21 @@ export async function getProductDetails(
   };
 }
 
-
 export async function updateProductService(payload: UpdateProductValidation) {
   const { id, ...dataToUpdate } = payload;
 
   // Kita construct object data agar mapping sesuai dengan schema Prisma
   // Gunakan undefined check agar field yang tidak dikirim tidak meng-overwrite database dengan null/undefined
-  const updateData: Parameters<typeof prisma.product.update>[0]['data'] = {};
+  const updateData: Parameters<typeof prisma.product.update>[0]["data"] = {};
 
   if (dataToUpdate.name !== undefined) updateData.name = dataToUpdate.name;
   if (dataToUpdate.price !== undefined) updateData.price = dataToUpdate.price;
-  
+
   // Mapping field Zod/UI -> Prisma DB
-  if (dataToUpdate.isOnSale !== undefined) updateData.onSale = dataToUpdate.isOnSale;
-  if (dataToUpdate.discountAmount !== undefined) updateData.promoPrice = dataToUpdate.discountAmount;
+  if (dataToUpdate.isOnSale !== undefined)
+    updateData.onSale = dataToUpdate.isOnSale;
+  if (dataToUpdate.discountAmount !== undefined)
+    updateData.promoPrice = dataToUpdate.discountAmount;
 
   const updatedProduct = await prisma.product.update({
     where: { id },
@@ -150,39 +164,44 @@ export async function updateProductService(payload: UpdateProductValidation) {
     include: {
       brand: true,
       category: true,
-    }
+    },
   });
 
   return updatedProduct;
 }
 
 export async function getAdminProducts(): Promise<Product[]> {
-    const products = await prisma.product.findMany({
-      include: {
-        brand: true,
-        category: true,
-      },
-    });
-  
-    return products.map((product) => ({
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
-      description: product.description,
-      stock: product.stock,
-      price: Number(product.price),
-      rating: 5,
-      imageSrc: product.imageUrl,
-      isOnSale: product.onSale,
-      discountAmount: Number(product.promoPrice || 0),
-      category: {
-        id: product.category.id,
-        name: product.category.name,
-        parent_id: product.category.parentId || "",
-      },
-      brand: {
-        id: product.brand.id,
-        name: product.brand.name,
-      },
-    }));
-  }
+  const products = await prisma.product.findMany({
+    include: {
+      brand: true,
+      category: true,
+      productMedia: true,
+    },
+  });
+
+  return products.map((product) => ({
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    description: product.description,
+    stock: product.stock,
+    price: Number(product.price),
+    rating: 5,
+    thumbnail:
+      product.productMedia.length > 0
+        ? product.productMedia[0].url
+        : "/images/products/no-image.webp",
+    medias: product.productMedia.map((media) => media.url),
+    isOnSale: product.onSale,
+    discountAmount: Number(product.promoPrice || 0),
+    category: {
+      id: product.category.id,
+      name: product.category.name,
+      parent_id: product.category.parentId || "",
+    },
+    brand: {
+      id: product.brand.id,
+      name: product.brand.name,
+    },
+  }));
+}

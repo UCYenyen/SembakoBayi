@@ -86,8 +86,8 @@ export const ProductAction: React.FC<ProductActionProps> = ({ data }) => {
             stock: data.stock,
             isOnSale: data.isOnSale,
             discountAmount: data.discountAmount,
-            // description: data.description, // Product type has description? Yes. UpdateProductValidation has optional description? Yes.
-            imageSrc: data.imageSrc
+            description: data.description, // Product type has description? Yes. UpdateProductValidation has optional description? Yes.
+            imageSrc: data.thumbnail
           }}
         />
       </SheetContent>

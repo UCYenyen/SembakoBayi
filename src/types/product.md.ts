@@ -4,7 +4,7 @@ export interface ProductCardProps{
     slug: string;
     price: number;
     rating: number;
-    imageSrc: string;
+    thumbnail: string;
     isOnSale: boolean;
     discountAmount: number;
     category: {
@@ -21,6 +21,7 @@ export interface ProductCardProps{
 export interface Product extends ProductCardProps {
     description: string;
     stock: number;
+    medias: string[];
 }
 
 export interface ProductUpdateEvent {

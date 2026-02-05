@@ -18,7 +18,7 @@ export default async function page({ params }: PageProps) {
             <CardTitle>{product.name}</CardTitle>
           </CardHeader>
           <CardContent>
-            <Image src={product.imageSrc} unoptimized alt={product.name} width={400} height={400} />
+            <Image src={product.thumbnail} unoptimized alt={product.name} width={400} height={400} />
             <CardDescription>{product.description}</CardDescription>
             <CardDescription>Price: Rp {product.price.toLocaleString('id-ID')}</CardDescription>
             <CardDescription>Stock: {product.stock}</CardDescription>

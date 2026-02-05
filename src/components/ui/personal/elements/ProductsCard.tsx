@@ -23,7 +23,7 @@ export default function ProductsCard(initialData: ProductCardProps) {
             <CardHeader className="space-y-1 relative flex flex-col justify-start items-center">
                 <Image 
                     unoptimized 
-                    src={product.imageSrc} 
+                    src={product.thumbnail} 
                     alt={product.name} 
                     width={900} 
                     height={900} 

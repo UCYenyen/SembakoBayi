@@ -65,7 +65,6 @@ async function main() {
         vendors: {
           connect: randomVendors.map((v) => ({ id: v.id })),
         },
-        imageUrl: faker.image.url(),
       },
     });
   }
